@@ -23,7 +23,8 @@ Atualizar conforme a implementação avançar.
 | AUD-001..AUD-018 | M2-T08, M3-T08, M4-T04..M4-T07, M5-T03..M5-T04, M7-T01..M7-T03 | — | — | SPECIFIED |
 | TEST-REQ-001 | M0-T01 | `scripts/check_spec_requirements.sh` | próprio script | VERIFIED |
 | SEC-018 | M8-T05 | — | — | SPECIFIED |
-| OPS-LOCAL-001..OPS-LOCAL-008 | M1-T05 | — | — | SPECIFIED |
+| OPS-LOCAL-001, OPS-LOCAL-003..OPS-LOCAL-008 | M0-T02A, M1-T05 | `.devcontainer/`, `.dockerignore`, `.env.example`, `README.md` | build, Compose, runtime, permissões e persistência | VERIFIED |
+| OPS-LOCAL-002 | M0-T02A, M1-T05 | `.devcontainer/compose.yaml` (`app`/`db`); worker futuro | Compose `config`/`ps` | SPECIFIED |
 | OPS-DEP-001 | M9-T01 | — | — | SPECIFIED |
 
 Estados: `SPECIFIED`, `IMPLEMENTED`, `TESTED`, `VERIFIED`, `DEPRECATED`.

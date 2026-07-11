@@ -1,0 +1,8 @@
+.env
+.bundle/
+coverage/
+log/
+node_modules/
+storage/
+tmp/
+vendor/bundle/

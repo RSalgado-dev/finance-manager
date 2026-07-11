@@ -2,6 +2,74 @@
 
 Acrescente novas sessões no topo. Não reescreva entradas antigas, salvo correção factual explícita.
 
+## 2026-07-11 20:23 — M0-T02A
+
+### Objetivo
+
+Construir e validar o Dev Container canônico sem instalar stack Ruby no host e sem inicializar Rails.
+
+### Estado inicial
+
+Branch `main`, working tree limpa, commit `d9d96a0`. `M0-T01` estava `DONE`; Docker 29.1.2 e Compose 2.40.3 disponíveis; aplicação Rails ausente.
+
+### Trabalho realizado
+
+- `M0-T02` subdividida em `M0-T02A` e `M0-T02B` sem renumerar tarefas;
+- Dev Container multi-stage criado com `app` não root e `db` PostgreSQL;
+- versões fixadas e Rails CLI instalada somente na imagem;
+- volumes de banco e gems, healthcheck, bind mount e pós-criação idempotente configurados;
+- README, guia operacional, ignores e ambiente fictício adicionados;
+- imagem construída e serviços iniciados;
+- ferramentas, PATH, permissões, hostname, autenticação e persistência validados;
+- nenhuma aplicação Rails, gem de projeto, migration ou código de domínio criado;
+- `M0-T02A` concluída com 18/18 critérios; `M0-T02B` permanece `NOT_STARTED`.
+
+### Arquivos principais
+
+- `.devcontainer/Dockerfile`
+- `.devcontainer/compose.yaml`
+- `.devcontainer/devcontainer.json`
+- `.devcontainer/scripts/post-create.sh`
+- `.env.example`
+- `.dockerignore`
+- `.gitignore`
+- `README.md`
+- `docs/development-container.md`
+- `planning/tasks/M0-specification-and-scaffold.md`
+- `planning/CURRENT.md`
+
+### Verificações
+
+| Comando | Resultado |
+|---|---|
+| `docker compose -f .devcontainer/compose.yaml config` | sucesso |
+| `docker compose -f .devcontainer/compose.yaml build` | sucesso; imagem multi-stage construída |
+| `docker compose -f .devcontainer/compose.yaml up -d` / `ps` | sucesso; app ativo, db healthy |
+| comandos Ruby/Bundler/Rails/psql no app | 3.4.10 / 2.7.2 / 8.1.3 / 15.18 |
+| pós-criação executado duas vezes | sucesso; idempotente, sem Gemfile e sem geração |
+| teste de UID/GID e bind mount | sucesso; usuário não root e ownership 1000:1000 |
+| `SELECT 1` via hostname `db` | sucesso, usuário `app` e banco de desenvolvimento |
+| persistência após restart de db/app | sucesso para banco e cache de gems; marcadores removidos |
+| `bash -n` e JSON | sucesso |
+| `scripts/check_spec_requirements.sh` | sucesso; 496 IDs, zero falhas |
+| `git diff --check` | sucesso |
+| ausência de estrutura Rails | confirmada |
+
+### Decisões
+
+Ruby 3.4.10, Rails 8.1.3, Bundler 2.7.2, PostgreSQL 17.10 e Debian 12 Bookworm. Dev Container é o único ambiente local canônico; nenhuma stack Ruby deve ser instalada no host.
+
+### Pendências e riscos
+
+- CLI `devcontainer` ausente, portanto não validada; não bloqueia por Compose/runtime completos;
+- psql 15.18 do Debian conecta ao servidor 17.10; registrar eventual alinhamento de major somente se surgir requisito;
+- worker será integrado ao mesmo Compose em M1, sem configuração concorrente;
+- alterações não commitadas; nenhum commit autorizado.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, detalhar `M0-T02B` e executar `rails new` exclusivamente dentro do `app` validado. Não iniciar M0-T03 ou M1 antes disso.
+
 ## 2026-07-11 17:43 — M0-T01
 
 ### Objetivo

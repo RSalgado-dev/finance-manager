@@ -87,7 +87,7 @@ Em nova sessão, executar o protocolo inicial, detalhar `M0-T02` com o template 
 
 ## M0-T02 — Inicializar aplicação Rails
 
-Status: `NOT_STARTED`
+Status: `IN_PROGRESS`
 
 ### Objetivo
 
@@ -95,7 +95,14 @@ Criar a aplicação Rails no repositório com PostgreSQL e escolhas técnicas ap
 
 ### Dependências
 
-M0-T01.
+M0-T01; agregadora de M0-T02A e M0-T02B.
+
+### Subtarefas
+
+- `M0-T02A` — Construir e validar o Dev Container.
+- `M0-T02B` — Inicializar a aplicação Rails dentro do Dev Container.
+
+`M0-T02B` depende de `M0-T02A` concluída. Nenhum comando da stack Ruby pode ser executado diretamente no host.
 
 ### Critérios de aceite
 
@@ -114,13 +121,155 @@ M0-T01.
 
 ---
 
+## M0-T02A — Construir e validar o Dev Container
+
+Status: `DONE`
+
+### Objetivo
+
+Entregar o ambiente local canônico, reproduzível e não root para executar toda a stack Ruby/Rails e PostgreSQL client exclusivamente em containers, sem inicializar a aplicação.
+
+### Requisitos relacionados
+
+- `ARCH-001`, `ARCH-002`, `ARCH-003`, `ARCH-004`, `ARCH-006`, `ARCH-007`, `ARCH-009`
+- `OPS-LOCAL-001` a `OPS-LOCAL-008`
+- `NFR-REL-003`, `NFR-MNT-001`
+
+### Dependências
+
+- `M0-T01`
+
+### Dentro do escopo
+
+- `.devcontainer/` com Dockerfile, Compose, configuração VS Code e pós-criação idempotente;
+- serviço `app` não root e serviço `db` isolado;
+- Ruby 3.4.10, Bundler 2.7.2, Rails CLI 8.1.3, PostgreSQL 17.10 e Debian 12 Bookworm;
+- PostgreSQL client, compilação de gems nativas, libvips, Chromium/ChromeDriver e ferramentas básicas;
+- volumes persistentes de gems e banco;
+- variáveis fictícias de desenvolvimento, documentação e validação real.
+
+### Fora do escopo
+
+- `rails new`, `Gemfile` da aplicação, migrations ou diretórios Rails;
+- gems de teste, lint, segurança e domínio no projeto;
+- CI, autenticação, multi-tenancy e código financeiro;
+- Redis, Sidekiq, Node.js, Docker socket ou modo privilegiado;
+- instalação de Ruby, Rails, Bundler ou PostgreSQL no host.
+
+### Critérios de aceite
+
+- [x] Estrutura `.devcontainer/` existe.
+- [x] Imagem `app` constrói com sucesso.
+- [x] Ruby funciona dentro do container.
+- [x] Bundler funciona dentro do container.
+- [x] Rails CLI funciona dentro do container.
+- [x] PostgreSQL client funciona dentro do container.
+- [x] PostgreSQL inicia e passa no healthcheck.
+- [x] `app` acessa PostgreSQL pelo hostname `db`.
+- [x] Ambiente utiliza usuário não root.
+- [x] Arquivos criados no workspace possuem permissões adequadas.
+- [x] Volumes persistentes estão configurados e validados.
+- [x] Script pós-criação é idempotente.
+- [x] Ruby no host não é necessário.
+- [x] Nenhuma aplicação Rails foi inicializada.
+- [x] Documentos existentes foram preservados.
+- [x] README documenta o fluxo containerizado.
+- [x] Verificações das especificações continuam passando.
+- [x] `git diff --check` passa.
+
+### Plano técnico
+
+1. Criar imagem baseada em Ruby/Debian fixados e usuário não root.
+2. Orquestrar `app` e PostgreSQL por Compose com healthcheck e volumes.
+3. Configurar Dev Container e pós-criação idempotente.
+4. Documentar comandos e diagnóstico sem instalação local da stack.
+5. Construir imagem, iniciar serviços e validar ferramentas, banco, persistência e permissões.
+6. Executar verificações documentais e registrar evidência real.
+
+### Riscos e casos de borda
+
+- volume de gems perder ownership ao ser montado;
+- UID/GID do host divergir do usuário do container;
+- download de imagens/gems falhar por rede;
+- Chromium aumentar significativamente a imagem;
+- CLI `devcontainer` não estar instalada no host, sem bloquear validação por Compose;
+- credenciais de desenvolvimento serem confundidas com secrets de produção.
+
+### Verificação obrigatória
+
+```bash
+docker compose -f .devcontainer/compose.yaml config
+docker compose -f .devcontainer/compose.yaml build
+docker compose -f .devcontainer/compose.yaml up -d
+docker compose -f .devcontainer/compose.yaml ps
+docker compose -f .devcontainer/compose.yaml exec app ruby --version
+docker compose -f .devcontainer/compose.yaml exec app bundle --version
+docker compose -f .devcontainer/compose.yaml exec app rails --version
+docker compose -f .devcontainer/compose.yaml exec app psql --version
+docker compose -f .devcontainer/compose.yaml exec app sh -lc 'pg_isready -h db && psql -h db -U "$DATABASE_USERNAME" -d "$POSTGRES_DB" -c "SELECT 1"'
+bash -n .devcontainer/scripts/post-create.sh scripts/check_spec_requirements.sh
+bash scripts/check_spec_requirements.sh
+git diff --check
+git status --short
+```
+
+### Evidência de conclusão
+
+Concluída em 2026-07-11:
+
+- planejamento subdividido e dependências atualizadas;
+- `.devcontainer/`, Compose, variáveis fictícias, ignores e documentação criados;
+- Ruby 3.4.10, Bundler 2.7.2, Rails CLI 8.1.3, PostgreSQL 17.10 e Debian 12 Bookworm fixados;
+- `bash -n` dos scripts: sucesso;
+- `docker compose ... config`: sucesso, sem portas publicadas, modo privilegiado ou Docker socket;
+- `docker compose ... build`: sucesso; imagem `finance-manager-dev-app` construída com as versões fixadas;
+- `docker compose ... up -d` e `ps`: sucesso; `app` ativo e PostgreSQL healthy;
+- Ruby 3.4.10, Bundler 2.7.2, Rails CLI 8.1.3, psql 15.18, Chromium/ChromeDriver 150 e libvips 8.14.1 executados no `app`;
+- usuário `vscode` não root e ownership `1000:1000` no bind mount validados;
+- pós-criação executado duas vezes consecutivas, ignorando corretamente `bundle install` sem `Gemfile`;
+- consulta `SELECT 1` e autenticação por hostname `db`: sucesso;
+- registro temporário persistiu após restart do `db`; tabela removida ao final;
+- marcador do cache de gems persistiu após restart do `app` e foi removido ao final;
+- comando descartável `docker compose ... run --rm app ruby --version`: sucesso;
+- shell de login encontra Ruby, Bundler e Rails pelo PATH configurado;
+- `bash -n` e JSON do Dev Container: sucesso;
+- `scripts/check_spec_requirements.sh`: sucesso, 496 IDs e zero falhas;
+- `git diff --check`: sucesso;
+- `Gemfile`, `app/`, `config/` e `db/` continuam ausentes;
+- primeira tentativa de build no sandbox falhou ao gravar no cache Buildx do host; repetição autorizada fora do sandbox concluiu com sucesso;
+- CLI `devcontainer` ausente no host; Compose validou a configuração e isso não bloqueia o aceite.
+
+### Próximo passo
+
+Em nova sessão, detalhar e iniciar `M0-T02B`, executando `rails new` exclusivamente dentro do Dev Container validado.
+
+---
+
+## M0-T02B — Inicializar a aplicação Rails dentro do Dev Container
+
+Status: `NOT_STARTED`
+
+### Objetivo
+
+Gerar e configurar o scaffold Rails exclusivamente dentro do Dev Container validado.
+
+### Dependências
+
+M0-T02A concluída.
+
+### Restrição
+
+Não iniciar nesta sessão.
+
+---
+
 ## M0-T03 — Configurar CI inicial
 
 Status: `NOT_STARTED`
 
 ### Dependências
 
-M0-T02.
+M0-T02B.
 
 ### Critérios de aceite
 
