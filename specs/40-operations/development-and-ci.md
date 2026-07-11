@@ -2,17 +2,15 @@
 
 ## Ambiente local
 
-O projeto deve fornecer:
+- `OPS-LOCAL-001 MUST` Fornecer Dockerfile multi-stage reutilizável no desenvolvimento e build de produção.
+- `OPS-LOCAL-002 MUST` Fornecer Compose de desenvolvimento com web, PostgreSQL e worker.
+- `OPS-LOCAL-003 MUST` Configurar healthchecks no ambiente local.
+- `OPS-LOCAL-004 MUST` Fornecer `.dockerignore`.
+- `OPS-LOCAL-005 MUST` Fornecer `.env.example` sem secrets.
+- `OPS-LOCAL-006 MUST` Documentar setup local com poucos comandos.
+- `OPS-LOCAL-007 MUST` Documentar alternativa de desenvolvimento sem Docker.
 
-- Dockerfile multi-stage;
-- Compose com web, PostgreSQL e worker;
-- healthchecks;
-- `.dockerignore`;
-- `.env.example`;
-- setup com poucos comandos;
-- instrução alternativa sem Docker.
-
-Fluxo desejado:
+- `OPS-LOCAL-008 SHOULD` Suportar o fluxo local:
 
 ```bash
 cp .env.example .env
@@ -38,7 +36,7 @@ docker compose up
 
 ## CI
 
-Executar:
+- `OPS-CI-004 MUST` Executar no CI, com versões compatíveis e comandos equivalentes aos reais do projeto:
 
 ```bash
 bundle install

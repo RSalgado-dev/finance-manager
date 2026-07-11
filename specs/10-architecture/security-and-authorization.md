@@ -23,27 +23,9 @@ PLATFORM_ADMIN_PASSWORD
 
 ## Autorização
 
-Usar Pundit ou mecanismo equivalente explicitamente aprovado.
+- `AUTHZ-000 MUST` Usar Pundit ou mecanismo equivalente explicitamente aprovado e implementar integralmente `specs/10-architecture/authorization-matrix.md`.
 
-### Platform administrator
-
-Pode administrar empresas, usuários, memberships, logs globais e suporte. Acesso a dados financeiros de empresa gera auditoria.
-
-### Company administrator
-
-Pode administrar a própria empresa, usuários, caixas, fechamentos, despesas, relatórios e auditoria.
-
-### Manager
-
-Pode administrar e aprovar fechamentos e despesas, exportar relatórios e consultar auditoria financeira.
-
-### Operator
-
-Pode criar e editar próprios rascunhos, enviar fechamento e registrar despesas conforme regras. Não pode aprovar o próprio fechamento.
-
-### Viewer
-
-Somente leitura sobre dashboards, registros e relatórios permitidos.
+As descrições dos atores em produto são contextuais. A matriz normativa é a fonte verificável para cada combinação de recurso, ação, estado e papel; permissões não listadas são negadas.
 
 ## Controles obrigatórios
 

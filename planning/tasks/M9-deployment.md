@@ -1,7 +1,9 @@
 # M9 — Produção
 
+Dependência do milestone: M8.
+
 ## M9-T01 — Docker multi-stage
-## M9-T02 — Compose e worker
+## M9-T02 — Processos de produção web e worker
 ## M9-T03 — Storage compatível com S3
 ## M9-T04 — SMTP
 ## M9-T05 — Healthcheck e páginas de erro

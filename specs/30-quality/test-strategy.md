@@ -2,7 +2,7 @@
 
 ## Ferramentas
 
-RSpec, FactoryBot e Capybara, salvo ADR que altere a escolha.
+- `TEST-000 MUST` Usar RSpec, FactoryBot e Capybara, salvo ADR aceito que altere a escolha.
 
 ## Cobertura por camada
 
@@ -16,14 +16,16 @@ RSpec, FactoryBot e Capybara, salvo ADR que altere a escolha.
 
 ## Cenários de sistema mínimos
 
-1. platform admin cria empresa e primeiro administrador;
-2. company admin cria caixa;
-3. operator cria e envia fechamento;
-4. manager aprova;
-5. despesa é criada e paga;
-6. relatório mensal mostra valores corretos;
-7. usuário tenta acessar recurso de outra empresa;
-8. empresa suspensa não utiliza aplicação.
+1. `TEST-SYS-001 MUST` Platform admin cria empresa e primeiro administrador.
+2. `TEST-SYS-002 MUST` Company admin cria caixa.
+3. `TEST-SYS-003 MUST` Operator cria e envia fechamento.
+4. `TEST-SYS-004 MUST` Manager aprova fechamento.
+5. `TEST-SYS-005 MUST` Despesa é criada, enviada e paga.
+6. `TEST-SYS-006 MUST` Relatório mensal mostra valores corretos nos dois regimes.
+7. `TEST-SYS-007 MUST` Usuário tenta acessar recurso de outra empresa.
+8. `TEST-SYS-008 MUST` Empresa suspensa não utiliza aplicação.
+9. `TEST-SYS-009 MUST` Reabertura remove fechamento das receitas até nova aprovação.
+10. `TEST-SYS-010 MUST` Cancelamento retroativo remove despesa dos resultados recalculados.
 
 ## Isolamento tenant
 
@@ -39,11 +41,15 @@ RSpec, FactoryBot e Capybara, salvo ADR que altere a escolha.
 
 ## Regra de evidência
 
-Cada tarefa deve listar:
+- `TEST-EVID-001 MUST` Cada tarefa listar:
 
 - comando executado;
 - resultado;
 - testes adicionados;
 - critérios cobertos.
 
-Mocks não substituem persistência real para regras financeiras.
+- `TEST-EVID-002 MUST NOT` Usar mocks como substitutos da persistência real em regras financeiras.
+- `TEST-TEN-010 MUST` Tentar persistir foreign keys cross-tenant diretamente no banco e esperar rejeição pela constraint.
+- `TEST-AUD-001 MUST` Testar que falha de auditoria crítica reverte a operação de domínio.
+- `TEST-AUD-002 MUST` Testar que AuditLog não pode ser atualizado ou destruído pela aplicação.
+- `TEST-REQ-001 MUST` Executar a checagem automatizada de IDs, referências e requisitos normativos antes de concluir revisão de especificação.

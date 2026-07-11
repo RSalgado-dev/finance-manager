@@ -11,11 +11,11 @@
 - `ARCH-007 MUST` Usar Solid Queue para tarefas assíncronas.
 - `ARCH-008 SHOULD` Manter controllers pequenos e lógica de domínio explícita.
 
-Versões exatas devem ser escolhidas no milestone de fundação, verificadas por compatibilidade e registradas no README e lockfiles.
+- `ARCH-009 MUST` Escolher versões exatas no milestone de fundação, verificar compatibilidade e registrá-las no README e lockfiles.
 
 ## Multi-tenancy
 
-Decisões detalhadas: `planning/decisions/ADR-0001-shared-database-tenancy.md` e `ADR-0002-path-based-company-context.md`.
+Decisões detalhadas: `planning/decisions/ADR-0001-shared-database-tenancy.md`, `planning/decisions/ADR-0002-path-based-company-context.md` e `planning/decisions/ADR-0003-composite-tenant-foreign-keys.md`.
 
 - `TEN-001 MUST` Usar banco compartilhado e schema compartilhado.
 - `TEN-002 MUST` Toda entidade tenant-scoped possuir `company_id`.
@@ -30,6 +30,11 @@ Decisões detalhadas: `planning/decisions/ADR-0001-shared-database-tenancy.md` e
 - `TEN-011 SHOULD` Manter possibilidade de subdomínio futuro sem alterar o modelo de dados.
 - `TEN-012 MUST NOT` Implementar PostgreSQL RLS na primeira versão.
 - `TEN-013 MUST` Documentar RLS como possível defesa adicional futura.
+- `TEN-014 MUST` Criar índices únicos em `[company_id, id]` quando necessários para suportar referências compostas.
+- `TEN-015 MUST` Usar foreign key composta sempre que uma entidade tenant-scoped referenciar outra entidade tenant-scoped.
+- `TEN-016 MUST` Manter validações Rails de coerência de tenant como defesa complementar, nunca como substitutas das constraints aplicáveis.
+- `TEN-017 MUST` Testar tentativa de referência cross-tenant diretamente no banco.
+- `TEN-018 MUST` Documentar e testar a estratégia equivalente para associações polimórficas ou relações em que PostgreSQL não permita foreign key composta direta.
 
 ## Rotas canônicas
 
@@ -55,28 +60,23 @@ Decisões detalhadas: `planning/decisions/ADR-0001-shared-database-tenancy.md` e
 - `ARCH-023 MUST` Configurar locale `pt-BR`.
 - `ARCH-024 MUST` Usar moeda padrão `BRL`.
 - `ARCH-025 MUST` Usar timezone padrão `America/Sao_Paulo`.
-- `ARCH-026 MUST` Considerar segunda-feira como início padrão da semana.
+- `ARCH-026 MUST` Usar semana fixa de segunda-feira a domingo.
 - `ARCH-027 MUST` Formatar datas e dinheiro no padrão brasileiro na interface.
 
 ## Organização do domínio
 
-Usar:
-
-- policies para autorização;
-- service/command objects para transições com efeitos;
-- query objects para relatórios e filtros complexos;
-- transações para operações multi-registro;
-- concerns apenas para comportamento realmente compartilhado;
-- presenters/helpers para formatação de interface.
-
-Evitar:
-
-- callbacks com efeitos colaterais não evidentes;
-- cálculos financeiros em views;
-- duplicação de fórmulas;
-- models sem limites de responsabilidade;
-- repository pattern sobre Active Record sem necessidade;
-- metaprogramação difícil de auditar.
+- `ARCH-DESIGN-001 MUST` Usar policies para autorização.
+- `ARCH-DESIGN-002 MUST` Usar service/command objects para transições com efeitos.
+- `ARCH-DESIGN-003 MUST` Usar query objects para relatórios e filtros complexos.
+- `ARCH-DESIGN-004 MUST` Usar transações para operações multi-registro.
+- `ARCH-DESIGN-005 MUST` Usar concerns apenas para comportamento realmente compartilhado.
+- `ARCH-DESIGN-006 MUST` Usar presenters/helpers para formatação de interface.
+- `ARCH-DESIGN-007 MUST NOT` Usar callbacks com efeitos colaterais não evidentes.
+- `ARCH-DESIGN-008 MUST NOT` Executar cálculos financeiros em views.
+- `ARCH-DESIGN-009 MUST NOT` Duplicar fórmulas.
+- `ARCH-DESIGN-010 MUST` Manter limites explícitos de responsabilidade nos models.
+- `ARCH-DESIGN-011 MUST NOT` Adicionar repository pattern sobre Active Record sem necessidade comprovada.
+- `ARCH-DESIGN-012 MUST NOT` Usar metaprogramação difícil de auditar.
 
 ## Consistência de relatórios
 

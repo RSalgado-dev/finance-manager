@@ -19,65 +19,60 @@ Criar um sistema web multi-tenant para gestão financeira operacional de pequena
 
 ### Platform administrator
 
-Opera a plataforma globalmente, cria empresas, cria ou convida usuários, administra vínculos e presta suporte auditado.
+- `PRD-ACTOR-001 MUST` Platform administrator operar a plataforma globalmente conforme a matriz normativa, incluindo empresas, identidades, vínculos e suporte auditado.
 
 ### Company administrator
 
-Administra configurações, usuários, caixas, fechamentos, despesas, relatórios e auditoria da própria empresa.
+- `PRD-ACTOR-002 MUST` Company administrator administrar os recursos autorizados da própria empresa conforme a matriz normativa.
 
 ### Manager
 
-Gerencia e aprova operações financeiras, consulta e exporta relatórios.
+- `PRD-ACTOR-003 MUST` Manager gerenciar e aprovar operações financeiras e consultar/exportar relatórios nos limites da matriz normativa.
 
 ### Operator
 
-Registra operações do dia a dia e envia informações para aprovação, sem poder aprovar o próprio fechamento.
+- `PRD-ACTOR-004 MUST` Operator registrar operações do dia a dia e enviar seus rascunhos, sem permissão de aprovação.
 
 ### Viewer
 
-Possui acesso somente de leitura a dashboards, registros permitidos e relatórios.
+- `PRD-ACTOR-005 MUST` Viewer possuir somente as permissões de leitura e export explicitamente previstas na matriz normativa.
 
 ## Escopo funcional inicial
 
-- autenticação sem cadastro público;
-- empresas e memberships;
-- gestão de caixas;
-- fechamento de caixa;
-- movimentações detalhadas;
-- despesas, categorias e fornecedores;
-- anexos privados;
-- dashboard;
-- relatórios e CSV;
-- painel global;
-- auditoria;
-- e-mails transacionais;
-- jobs;
-- Docker, CI e deploy.
+- `PRD-SCOPE-001 MUST` Incluir autenticação sem cadastro público.
+- `PRD-SCOPE-002 MUST` Incluir empresas, memberships e convites.
+- `PRD-SCOPE-003 MUST` Incluir gestão de caixas, fechamentos e movimentações detalhadas.
+- `PRD-SCOPE-004 MUST` Incluir despesas, categorias, fornecedores e comprovantes privados.
+- `PRD-SCOPE-005 MUST` Incluir dashboard, relatórios HTML, impressão e CSV.
+- `PRD-SCOPE-006 MUST` Incluir painel global e suporte auditado.
+- `PRD-SCOPE-007 MUST` Incluir auditoria crítica e observacional conforme ADR-0004.
+- `PRD-SCOPE-008 MUST` Incluir e-mails transacionais e jobs necessários.
+- `PRD-SCOPE-009 MUST` Incluir Docker de desenvolvimento e produção, CI e documentação de deploy.
 
 ## Fora de escopo
 
-- `PRD-101` emissão de nota fiscal;
-- `PRD-102` integração bancária;
-- `PRD-103` conciliação automática;
-- `PRD-104` folha de pagamento;
-- `PRD-105` estoque;
-- `PRD-106` integração com adquirentes;
-- `PRD-107` cobrança de assinatura;
-- `PRD-108` checkout;
-- `PRD-109` contabilidade fiscal;
-- `PRD-110` aplicativo mobile nativo;
-- `PRD-111` microserviços.
+- `PRD-101 MUST NOT` Implementar emissão de nota fiscal.
+- `PRD-102 MUST NOT` Implementar integração bancária.
+- `PRD-103 MUST NOT` Implementar conciliação automática.
+- `PRD-104 MUST NOT` Implementar folha de pagamento.
+- `PRD-105 MUST NOT` Implementar estoque.
+- `PRD-106 MUST NOT` Implementar integração com adquirentes.
+- `PRD-107 MUST NOT` Implementar cobrança de assinatura.
+- `PRD-108 MUST NOT` Implementar checkout.
+- `PRD-109 MUST NOT` Implementar contabilidade fiscal.
+- `PRD-110 MUST NOT` Implementar aplicativo mobile nativo.
+- `PRD-111 MUST NOT` Implementar microserviços.
 
-Itens fora do escopo não devem ser implementados incidentalmente.
+- `PRD-112 MUST NOT` Implementar incidentalmente itens fora do escopo.
 
 ## Critérios de sucesso da primeira versão
 
-- duas empresas de demonstração operam sem vazamento de dados;
-- um fluxo completo de fechamento é executável;
-- um fluxo completo de despesa é executável;
-- dashboards e relatórios usam os mesmos cálculos centrais;
-- exports respeitam tenant e filtros;
-- aplicação sobe em banco vazio;
-- testes, lint e verificações de segurança passam;
-- imagem de produção é construída;
-- deploy e recuperação estão documentados.
+- `PRD-SUCCESS-001 MUST` Demonstrar duas empresas operando sem vazamento de dados.
+- `PRD-SUCCESS-002 MUST` Executar um fluxo completo de fechamento.
+- `PRD-SUCCESS-003 MUST` Executar um fluxo completo de despesa.
+- `PRD-SUCCESS-004 MUST` Demonstrar que dashboards e relatórios usam os mesmos cálculos centrais.
+- `PRD-SUCCESS-005 MUST` Demonstrar que exports respeitam tenant e filtros.
+- `PRD-SUCCESS-006 MUST` Inicializar a aplicação sobre banco vazio.
+- `PRD-SUCCESS-007 MUST` Passar testes, lint e verificações de segurança aplicáveis.
+- `PRD-SUCCESS-008 MUST` Construir a imagem de produção.
+- `PRD-SUCCESS-009 MUST` Documentar deploy e recuperação.

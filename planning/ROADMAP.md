@@ -6,17 +6,27 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 
 | Milestone | Objetivo | Dependências | Status |
 |---|---|---|---|
-| M0 | Especificação, decisões e scaffold do projeto | nenhuma | IN_PROGRESS |
-| M1 | Fundação Rails, PostgreSQL, UUID, UI base e CI | M0 | NOT_STARTED |
-| M2 | Autenticação, empresas, memberships e tenancy | M1 | NOT_STARTED |
-| M3 | Autorização, painel platform e gestão de usuários | M2 | NOT_STARTED |
+| M0 | Especificação, decisões, scaffold Rails e CI inicial | nenhuma | IN_PROGRESS |
+| M1 | Fundação da aplicação, UI base, padrões e Docker de desenvolvimento | M0 | NOT_STARTED |
+| M2 | Autenticação, empresas, memberships, convites e tenancy | M1 | NOT_STARTED |
+| M3 | Autorização, painel platform, gestão de usuários e auditoria mínima | M2 | NOT_STARTED |
 | M4 | Caixas e fechamento de caixa | M3 | NOT_STARTED |
 | M5 | Despesas, categorias, fornecedores e anexos | M3 | NOT_STARTED |
 | M6 | Dashboard e relatórios | M4, M5 | NOT_STARTED |
-| M7 | Auditoria, jobs e e-mails | M3, M4, M5 | NOT_STARTED |
+| M7 | Revisão transversal de auditoria, jobs e notificações complementares | M3, M4, M5, M6 | NOT_STARTED |
 | M8 | Hardening de segurança e isolamento tenant | M6, M7 | NOT_STARTED |
 | M9 | Docker de produção, deploy, backup e observabilidade | M8 | NOT_STARTED |
 | M10 | Verificação final e release candidate | M9 | NOT_STARTED |
+
+## Fronteiras aprovadas
+
+- CI inicial é entregue em M0 e permanece obrigatório antes dos domínios.
+- Docker/Compose de desenvolvimento pertence a M1; imagem, processos e deploy de produção pertencem a M9.
+- Convites, e-mails de convite e recuperação pertencem a M2.
+- AuditLog e serviço transacional mínimo pertencem a M3; cada domínio M4/M5 implementa seus próprios eventos críticos.
+- CSV e impressão pertencem a M6.
+- Export assíncrono em M7 é condicional a necessidade demonstrada e não é critério obrigatório da primeira versão.
+- M8 executa revisão adversarial transversal sem substituir testes tenant-scoped em cada milestone.
 
 ## Regra de passagem
 

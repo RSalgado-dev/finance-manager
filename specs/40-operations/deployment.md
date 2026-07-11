@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Aplicação pronta para plataforma compatível com containers, com exemplo documentado para Render ou equivalente.
+- `OPS-DEP-000 MUST` Preparar a aplicação para plataforma compatível com containers e documentar exemplo para Render ou equivalente.
 
 ## Requisitos
 
@@ -20,6 +20,8 @@ Aplicação pronta para plataforma compatível com containers, com exemplo docum
 - `OPS-DEP-012 MUST` Emitir logs em stdout.
 
 ## Variáveis esperadas
+
+- `OPS-DEP-020 MUST` Documentar e configurar, quando aplicáveis, as seguintes variáveis sem versionar seus valores secretos:
 
 ```text
 RAILS_ENV
@@ -43,4 +45,4 @@ AWS_REGION
 AWS_BUCKET
 ```
 
-O README e `docs/deployment.md` finais devem refletir os nomes realmente implementados.
+- `OPS-DEP-021 MUST` Fazer README e o guia final de deployment em `docs/` refletirem os nomes realmente implementados.

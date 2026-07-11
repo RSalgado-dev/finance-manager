@@ -13,13 +13,15 @@ O `AGENTS.md` define como trabalhar. `planning/` define o que fazer agora. `spec
 3. `10-architecture/system-architecture.md`
 4. `10-architecture/data-model.md`
 5. `10-architecture/security-and-authorization.md`
-6. arquivo do domínio relacionado à tarefa
-7. requisitos de qualidade e operação relacionados
+6. `10-architecture/authorization-matrix.md`
+7. arquivo do domínio relacionado à tarefa
+8. requisitos de qualidade e operação relacionados
 
 ## Mapa de arquivos
 
 ### Produto
 
+- `00-product/source-brief.md`: reconstrução histórica e não normativa da intenção original.
 - `00-product/product-spec.md`: visão, atores, escopo e exclusões.
 - `00-product/glossary.md`: vocabulário canônico.
 
@@ -28,6 +30,7 @@ O `AGENTS.md` define como trabalhar. `planning/` define o que fazer agora. `spec
 - `10-architecture/system-architecture.md`: stack, monólito, tenancy e padrões.
 - `10-architecture/data-model.md`: entidades e restrições principais.
 - `10-architecture/security-and-authorization.md`: autenticação, papéis e controles.
+- `10-architecture/authorization-matrix.md`: permissões normativas por recurso, ação, estado e ator.
 
 ### Domínios
 
@@ -53,6 +56,9 @@ O `AGENTS.md` define como trabalhar. `planning/` define o que fazer agora. `spec
 - `ARCH-*`: arquitetura.
 - `SEC-*`: segurança.
 - `AUTH-*`: autenticação e autorização.
+- `AUTHZ-*`: matriz normativa de autorização.
+- `INV-*`: convites de empresa.
+- `DATA-*`: contratos lógicos de entidades e constraints.
 - `TEN-*`: multi-tenancy.
 - `USR-*`: usuários e empresas.
 - `CASH-*`: caixas e fechamentos.
@@ -63,6 +69,13 @@ O `AGENTS.md` define como trabalhar. `planning/` define o que fazer agora. `spec
 - `NFR-*`: requisitos não funcionais.
 - `TEST-*`: testes.
 - `OPS-*`: operação e deploy.
+- `PRD-ACTOR-*`, `PRD-SCOPE-*`, `PRD-SUCCESS-*`: atores, escopo e aceite do produto.
+- `CASH-FORMULA-*`, `CASH-STATE-*`, `CASH-EDIT-*`: fórmulas, transições e edição de fechamento.
+- `EXP-STATE-*`, `EXP-EDIT-*`: transições e edição de despesas.
+- `REP-DASH-*`, `REP-REPORT-*`: dashboard e contratos de relatórios.
+- `REP-FORMULA-*`: fórmulas financeiras de relatórios.
+- `TEST-SYS-*`, `TEST-EVID-*`, `TEST-AUD-*`, `TEST-REQ-*`: cenários e evidências de teste.
+- `OPS-LOCAL-*`: ambiente local.
 
 Os identificadores não devem ser renumerados após uso. Requisitos removidos devem ser marcados como `DEPRECATED`, com referência à decisão correspondente.
 
