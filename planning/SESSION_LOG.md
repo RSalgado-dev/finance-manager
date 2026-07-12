@@ -2,6 +2,56 @@
 
 Acrescente novas sessões no topo. Não reescreva entradas antigas, salvo correção factual explícita.
 
+## 2026-07-11 21:00 — M0-T02B
+
+### Objetivo
+
+Inicializar e validar o scaffold Rails `CompanyFinance` exclusivamente no Dev Container, sem implementar domínio ou CI.
+
+### Estado inicial
+
+Branch `main`, working tree limpa, commit `9e7de69`. `M0-T01` e `M0-T02A` estavam `DONE`; `M0-T02B` estava `NOT_STARTED`; `app` e `db` operacionais e nenhuma estrutura Rails existia.
+
+### Trabalho realizado
+
+- tarefa detalhada e marcada `IN_PROGRESS` antes da geração;
+- flags do Rails 8.1.3 confirmados e scaffold gerado primeiro em `/tmp/company_finance`;
+- scaffold incorporado com `--skip`, preservando documentação, Dev Container, specs e planning;
+- Rails/PostgreSQL/importmap/Hotwire/Tailwind, UUID, `pt-BR`, BRL, timezone e semana fixa configurados;
+- RSpec, FactoryBot, Capybara/Selenium, RuboCop Omakase, Brakeman e Bundler Audit configurados;
+- request e system specs reais de `/up` adicionados;
+- Active Storage mantido sem tabelas de comprovantes; Solid Queue mantido com PostgreSQL e sem Redis;
+- README e guia do container atualizados, sem instruções de Ruby no host;
+- bancos development/test recriados do zero; imagem reconstruída; scaffold temporário removido;
+- `M0-T02B` e agregadora `M0-T02` concluídas. `M0-T03` não foi iniciada.
+
+### Verificações
+
+| Comando | Resultado |
+|---|---|
+| Compose `config`, `build`, `up -d`, `ps` | sucesso; app ativo e db healthy |
+| versões no `app` | Ruby 3.4.10, Bundler 2.7.2, Rails 8.1.3, psql 15.18 |
+| `bundle install` / `bundle check` | sucesso; lockfile resolvido no container |
+| `db:drop db:create db:prepare` e test prepare | sucesso; bancos recriados sem estado residual |
+| `bundle exec rspec` | 2 exemplos, 0 falhas |
+| `bundle exec rubocop` | 28 arquivos, 0 offenses |
+| `bundle exec brakeman` | 0 warnings |
+| `bundle exec bundler-audit check --update` | advisory database atualizado, 0 vulnerabilidades |
+| routes / Zeitwerk / Tailwind / assets | sucesso |
+| runners de módulo, regionalização, UUID, Active Storage e Solid Queue | valores esperados confirmados |
+| `bin/setup --skip-server` | sucesso idempotente |
+| `bin/dev` + requisição `/up` | Puma e Tailwind ativos; HTTP 200 |
+| `scripts/check_spec_requirements.sh` | 496 IDs, zero falhas |
+| `bash -n` / `git diff --check` | sucesso |
+
+### Falhas corrigidas
+
+A primeira validação de `bin/dev` detectou o bit executável ausente; a segunda detectou que o watcher Tailwind encerrava sem TTY. O script passou a usar Foreman pelo Bundler e `tailwindcss:watch[always]`; a validação seguinte passou.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, executar o protocolo inicial e detalhar `M0-T03 — Configurar CI inicial`; não iniciar M1 ou domínios antes do CI.
+
 ## 2026-07-11 20:23 — M0-T02A
 
 ### Objetivo

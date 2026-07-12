@@ -29,6 +29,14 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 - Export assíncrono em M7 é condicional a necessidade demonstrada e não é critério obrigatório da primeira versão.
 - M8 executa revisão adversarial transversal sem substituir testes tenant-scoped em cada milestone.
 
+## Progresso de M0
+
+- `M0-T01`: `DONE` — baseline normativa validada.
+- `M0-T02A`: `DONE` — Dev Container construído e validado.
+- `M0-T02B`: `DONE` — scaffold Rails `CompanyFinance` incorporado e validado exclusivamente no container.
+- `M0-T02`: `DONE` — tarefa agregadora concluída.
+- `M0-T03`: `NOT_STARTED` — próxima tarefa; CI inicial ainda não foi configurado.
+
 ## Regra de passagem
 
 Um milestone só passa a `VERIFIED` quando:

@@ -7,9 +7,9 @@ O Compose define dois serviços:
 - `app`: Ruby/Rails CLI e ferramentas de desenvolvimento, executado como usuário `vscode` não root, com o repositório montado em `/workspace/finance-manager` e cache de gems persistente;
 - `db`: PostgreSQL de desenvolvimento, acessível apenas na rede interna pelo hostname `db`, com healthcheck e volume próprio.
 
-Não há Ruby no host, Redis, Sidekiq, Node.js, socket Docker ou modo privilegiado. Solid Queue utilizará PostgreSQL quando a aplicação for criada.
+Não há Ruby no host, Redis, Sidekiq, Node.js, socket Docker ou modo privilegiado. A aplicação `CompanyFinance` usa Solid Queue com PostgreSQL, sem jobs de negócio nesta fase.
 
-Chromium e ChromeDriver estão presentes para futuros system specs; libvips atende ao futuro processamento de imagens do Active Storage. Gems de RSpec, Capybara, RuboCop, Brakeman e Bundler Audit serão adicionadas somente após existir aplicação.
+Chromium e ChromeDriver atendem aos system specs headless; libvips atende ao processamento futuro de imagens do Active Storage. RSpec, FactoryBot, Capybara, Selenium, RuboCop, Brakeman e Bundler Audit são executados somente em `app`.
 
 ## Comandos canônicos
 
@@ -40,6 +40,8 @@ Executar shell ou comando:
 ```bash
 docker compose -f .devcontainer/compose.yaml exec app bash
 docker compose -f .devcontainer/compose.yaml exec app ruby --version
+docker compose -f .devcontainer/compose.yaml exec app bin/rails db:prepare
+docker compose -f .devcontainer/compose.yaml exec app bundle exec rspec
 ```
 
 Parar preservando dados, reconstruir ou remover volumes estão documentados no README.
@@ -59,7 +61,7 @@ Teste a conexão a partir de `app`:
 
 ```bash
 docker compose -f .devcontainer/compose.yaml exec app sh -lc \
-  'PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USERNAME" -d "$POSTGRES_DB" -c "SELECT 1"'
+  'PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USERNAME" -d "$DATABASE_NAME" -c "SELECT 1"'
 ```
 
 Se falhar:

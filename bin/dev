@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+set -eu
+
+if ! bundle check >/dev/null 2>&1; then
+  echo "as gems não estão instaladas; execute bundle install dentro do Dev Container." >&2
+  exit 1
+fi
+
+export PORT="${PORT:-3000}"
+export RUBY_DEBUG_OPEN="true"
+export RUBY_DEBUG_LAZY="true"
+
+exec bundle exec foreman start -f Procfile.dev "$@"

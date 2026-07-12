@@ -87,7 +87,7 @@ Em nova sessão, executar o protocolo inicial, detalhar `M0-T02` com o template 
 
 ## M0-T02 — Inicializar aplicação Rails
 
-Status: `IN_PROGRESS`
+Status: `DONE`
 
 ### Objetivo
 
@@ -106,14 +106,14 @@ M0-T01; agregadora de M0-T02A e M0-T02B.
 
 ### Critérios de aceite
 
-- [ ] Aplicação inicia.
-- [ ] Banco PostgreSQL conecta.
-- [ ] Test framework funciona.
-- [ ] UUID padrão definido.
-- [ ] Locale e timezone base configurados.
-- [ ] README contém setup inicial.
-- [ ] `.env.example` existe.
-- [ ] Baseline de testes, lint e segurança registrado.
+- [x] Aplicação inicia.
+- [x] Banco PostgreSQL conecta.
+- [x] Test framework funciona.
+- [x] UUID padrão definido.
+- [x] Locale e timezone base configurados.
+- [x] README contém setup inicial.
+- [x] `.env.example` existe.
+- [x] Baseline de testes, lint e segurança registrado.
 
 ### Requisitos
 
@@ -247,19 +247,137 @@ Em nova sessão, detalhar e iniciar `M0-T02B`, executando `rails new` exclusivam
 
 ## M0-T02B — Inicializar a aplicação Rails dentro do Dev Container
 
-Status: `NOT_STARTED`
+Status: `DONE`
 
 ### Objetivo
 
-Gerar e configurar o scaffold Rails exclusivamente dentro do Dev Container validado.
+Gerar, incorporar e validar na raiz uma aplicação Rails monolítica `CompanyFinance`, exclusivamente dentro do Dev Container, preservando o repositório spec-driven.
+
+### Requisitos relacionados
+
+- `ARCH-001` a `ARCH-009`, `ARCH-020` a `ARCH-027`
+- `ARCH-DATA-001`, `ARCH-DATA-002`, `ARCH-DATA-013`
+- `TEST-000` a `TEST-007`, `TEST-EVID-001`
+- `OPS-LOCAL-001` a `OPS-LOCAL-008`, `OPS-DEV-010`, `OPS-CI-001`, `OPS-CI-003`, `OPS-CI-004`
+- `NFR-REL-003`, `NFR-MNT-001`, `NFR-MNT-002`
 
 ### Dependências
 
 M0-T02A concluída.
 
+### Dentro do escopo
+
+- scaffold Rails 8.1.3 com PostgreSQL, importmap, Hotwire e Tailwind;
+- módulo `CompanyFinance` e UUID padrão para generators;
+- banco development/test por variáveis de ambiente e produção por `DATABASE_URL`;
+- locale `pt-BR`, timezone `America/Sao_Paulo` e formatos brasileiros;
+- RSpec, FactoryBot, Capybara/Selenium headless;
+- RuboCop Rails Omakase, Brakeman e Bundler Audit;
+- endpoint institucional mínimo ou `/up` coberto por teste real;
+- Active Storage carregável sem instalar suas tabelas de comprovantes;
+- Solid Queue disponível com PostgreSQL e sem Redis;
+- scripts canônicos, assets e README containerizado.
+
+### Fora do escopo
+
+- qualquer model, migration, controller ou tela de domínio;
+- autenticação, autorização, tenancy, auditoria funcional e relatórios;
+- Active Storage install e tabelas de comprovantes;
+- jobs de negócio, worker de produção, CI ou deploy;
+- Devise, Pundit, Pagy, Rack::Attack, multi-tenancy ou state machine;
+- instalação da stack Ruby no host.
+
+### Critérios de aceite
+
+- [x] Aplicação Rails incorporada à raiz e módulo `CompanyFinance` confirmado.
+- [x] Documentos e Dev Container anteriores preservados e operacionais.
+- [x] Rails 8.1.3 e PostgreSQL configurados para development/test separados.
+- [x] Bancos vazios podem ser criados e preparados do zero.
+- [x] UUID é padrão explícito para futuras migrations.
+- [x] Locale `pt-BR`, timezone `America/Sao_Paulo` e semana fixa preservados.
+- [x] Importmap, Turbo, Stimulus e Tailwind estão disponíveis e compiláveis.
+- [x] Active Storage está carregável sem antecipar comprovantes.
+- [x] Solid Queue está disponível sem Redis.
+- [x] RSpec, FactoryBot, Capybara e system specs headless estão configurados.
+- [x] Há pelo menos um request spec real passando e Minitest foi removido.
+- [x] RuboCop passa.
+- [x] Brakeman passa sem achado crítico não justificado.
+- [x] Bundler Audit passa ou possui limitação externa real registrada.
+- [x] Zeitwerk, routes, assets e boot da aplicação passam.
+- [x] README contém somente o fluxo containerizado validado.
+- [x] Nenhuma funcionalidade de domínio foi antecipada.
+- [x] Verificador de specs e `git diff --check` passam.
+- [x] Ruby no host não é necessário.
+
+### Plano técnico
+
+1. Inspecionar `rails new --help` e gerar `CompanyFinance` em `/tmp` sem Git, Docker, CI, Kamal ou Minitest.
+2. Inventariar o scaffold e conflitos; incorporar seletivamente, mesclando arquivos existentes.
+3. Fixar Gemfile/lockfile e instalar dependências apenas no `app`.
+4. Configurar banco, UUID, regionalização, Active Storage e Solid Queue.
+5. Configurar RSpec, FactoryBot, Capybara/Chromium e teste mínimo real.
+6. Ajustar scripts, Tailwind/assets, qualidade, segurança e README.
+7. validar banco vazio, suíte e todos os comandos obrigatórios.
+
+### Riscos e casos de borda
+
+- generator sobrescrever documentação, ignores ou Dev Container;
+- flags mudarem no Rails 8.1.3;
+- gems geradas terem versões incompatíveis ou vulneráveis;
+- Tailwind exigir ajuste sem Node;
+- scripts Rails assumirem execução no host;
+- bancos existentes conterem estado residual;
+- rede impedir `bundle install` ou atualização do advisory database.
+
+### Verificação obrigatória
+
+```bash
+docker compose -f .devcontainer/compose.yaml exec app bundle install
+docker compose -f .devcontainer/compose.yaml exec app bin/rails db:create db:prepare
+docker compose -f .devcontainer/compose.yaml exec app env RAILS_ENV=test bin/rails db:prepare
+docker compose -f .devcontainer/compose.yaml exec app bundle exec rspec
+docker compose -f .devcontainer/compose.yaml exec app bundle exec rubocop
+docker compose -f .devcontainer/compose.yaml exec app bundle exec brakeman
+docker compose -f .devcontainer/compose.yaml exec app bundle exec bundler-audit check --update
+docker compose -f .devcontainer/compose.yaml exec app bin/rails routes
+docker compose -f .devcontainer/compose.yaml exec app bin/rails zeitwerk:check
+docker compose -f .devcontainer/compose.yaml exec app bin/rails assets:precompile
+docker compose -f .devcontainer/compose.yaml exec app bin/rails runner 'puts Rails.application.class.name'
+docker compose -f .devcontainer/compose.yaml exec app bin/rails runner 'puts Rails.application.config.time_zone'
+docker compose -f .devcontainer/compose.yaml exec app bin/rails runner 'puts I18n.default_locale'
+bash scripts/check_spec_requirements.sh
+git diff --check
+```
+
+### Evidência de conclusão
+
+Concluída em 2026-07-11:
+
+- `rails new --help` foi executado dentro de `app`; Rails 8.1.3 oferece `--database`, `--javascript`, `--css`, `--skip-test`, `--skip-git`, `--skip-docker`, `--skip-ci`, `--skip-kamal` e `--skip-devcontainer`.
+- O scaffold temporário `/tmp/company_finance` foi gerado dentro de `app` com módulo `CompanyFinance`, PostgreSQL, importmap e Tailwind, sem Git, Docker, Dev Container, CI, Kamal ou Minitest.
+- A geração temporária executou Bundler e os installers de importmap, Turbo, Stimulus e Tailwind com sucesso; nenhum arquivo da raiz foi substituído.
+- Após inventário dos conflitos, a incorporação foi executada pela própria CLI Rails com `--skip`; `README.md`, `.devcontainer/`, `specs/`, `planning/`, `prompts/` e `scripts/` permaneceram preservados.
+- `bundle install`, `db:create` e `db:prepare` passaram dentro de `app`; os bancos `company_finance_development` e `company_finance_test` estão separados e usam o hostname `db`.
+- Runner confirmou `CompanyFinance::Application`, `America/Sao_Paulo`, `pt-BR`, segunda-feira como início da semana e `uuid` como chave primária dos generators.
+- Dev Container reconstruído com sucesso após a incorporação; `app` permaneceu ativo e `db` healthy.
+- Ruby 3.4.10, Bundler 2.7.2, Rails 8.1.3 e psql 15.18 foram executados dentro de `app`; `bundle check` confirmou o lockfile.
+- Antes da prova de banco vazio, consulta ao schema confirmou zero tabelas de domínio. `db:drop`, `db:create` e `db:prepare` recriaram development e test; a suíte passou novamente.
+- RSpec: 2 exemplos e zero falhas, incluindo request spec de `/up` e system spec real com Chromium headless.
+- RuboCop: 28 arquivos, zero offenses. Brakeman 8.0.5: zero warnings. Bundler Audit: advisory database atualizado e nenhuma vulnerabilidade.
+- `routes`, `zeitwerk:check`, `tailwindcss:build` e `assets:precompile`: sucesso.
+- Active Storage carregou como engine e nenhuma tabela `active_storage_*` foi criada. Solid Queue carregou e seus schemas de infraestrutura permanecem sem Redis ou jobs de negócio.
+- `bin/setup --skip-server` passou idempotentemente. `bin/dev` iniciou Puma e o watcher persistente do Tailwind; requisição real a `/up` retornou 200.
+- A primeira execução de `bin/dev` revelou perda do bit executável e a segunda revelou o watcher não persistente; ambas foram corrigidas e a terceira validação passou.
+- `bash -n`: sucesso nos scripts shell alterados. `scripts/check_spec_requirements.sh`: 496 IDs e zero falhas. `git diff --check`: sucesso.
+- Scaffold temporário removido após incorporação e validação. Nenhuma funcionalidade de domínio, CI ou deploy foi criada.
+
+### Próximo passo
+
+Iniciar `M0-T03` em nova sessão, detalhando a configuração inicial de CI antes de qualquer implementação de domínio.
+
 ### Restrição
 
-Não iniciar nesta sessão.
+Não iniciar `M0-T03` nesta sessão.
 
 ---
 

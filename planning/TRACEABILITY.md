@@ -25,6 +25,14 @@ Atualizar conforme a implementação avançar.
 | SEC-018 | M8-T05 | — | — | SPECIFIED |
 | OPS-LOCAL-001, OPS-LOCAL-003..OPS-LOCAL-008 | M0-T02A, M1-T05 | `.devcontainer/`, `.dockerignore`, `.env.example`, `README.md` | build, Compose, runtime, permissões e persistência | VERIFIED |
 | OPS-LOCAL-002 | M0-T02A, M1-T05 | `.devcontainer/compose.yaml` (`app`/`db`); worker futuro | Compose `config`/`ps` | SPECIFIED |
+| ARCH-001..ARCH-007, ARCH-009 | M0-T02B | `Gemfile`, `config/application.rb`, `app/`, `config/importmap.rb`, `Procfile.dev`, schemas Solid | boot, runner, Tailwind/assets, Active Storage e Solid Queue | VERIFIED |
+| ARCH-020, ARCH-023..ARCH-027 | M0-T02B | `config/application.rb`, `config/locales/pt-BR.yml` | runner de UUID, locale, timezone e início da semana | VERIFIED |
+| TEST-000 | M0-T02B | `Gemfile`, `spec/rails_helper.rb`, `spec/support/` | request e system specs | VERIFIED |
+| TEST-003, TEST-006 | M0-T02B e tarefas de domínio futuras | `spec/requests/`, `spec/system/` | smoke tests de `/up`, incluindo Chromium headless | IMPLEMENTED |
+| NFR-REL-003 | M0-T02B | `config/routes.rb` | request spec, system spec e requisição real a `/up` | VERIFIED |
+| NFR-MNT-001, NFR-MNT-002 | M0-T02B | `README.md`, `docs/development-container.md`, `.rubocop.yml` | documentação revisada e RuboCop sem offenses | VERIFIED |
+| OPS-DEV-010 | M0-T02B | `Gemfile`, `config/queue.yml`, `db/queue_schema.rb` | boot de `SolidQueue`; ausência de Redis | IMPLEMENTED |
+| OPS-CI-003 | M0-T02B, M0-T03 | `Gemfile.lock`, `.ruby-version`, Dev Container | `bundle check` e versões no runtime | VERIFIED |
 | OPS-DEP-001 | M9-T01 | — | — | SPECIFIED |
 
 Estados: `SPECIFIED`, `IMPLEMENTED`, `TESTED`, `VERIFIED`, `DEPRECATED`.

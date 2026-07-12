@@ -1,108 +1,70 @@
 # Estado atual
 
-Atualizado em: `2026-07-11 20:23 America/Sao_Paulo`
+Atualizado em: `2026-07-11 21:00 America/Sao_Paulo`
 
 ## Estado do repositório
 
-- Milestone ativo: `M0`
-- Tarefa ativa: nenhuma; `M0-T02A` concluída, `M0-T02B` ainda `NOT_STARTED`
-- Estado global: `DEV_CONTAINER_READY`
-- Branch: `main`
-- Working tree inicial: limpa; atual: alterações de `M0-T02A` não commitadas
-- Último commit relevante: `d9d96a0` (`feat: Revise domain specifications and introduce new requirements`)
+- Milestone: `M0` — `IN_PROGRESS` até concluir o CI inicial.
+- Última tarefa trabalhada: `M0-T02B` — `DONE`.
+- Tarefa agregadora `M0-T02`: `DONE` (`M0-T02A` e `M0-T02B` concluídas).
+- Próxima tarefa: `M0-T03` — `NOT_STARTED`.
+- Estado operacional: `RAILS_SCAFFOLD_VERIFIED`.
+- Branch: `main`.
+- Último commit: `9e7de69 feat: Implementar Dev Container e atualizar planejamento para M0 e M1`.
+- Working tree inicial: limpa; atual: scaffold e documentação de `M0-T02B` não commitados.
 
-## O que já existe
+## Resultado
 
-- Baseline normativa revisada, com 496 requisitos identificados.
-- Decisões aceitas de tenancy, contexto por path, integridade composta e auditoria transacional.
-- Máquinas de estado, matriz de autorização, cobertura de origem, roadmap e protocolo entre sessões.
-- Aplicação ainda não inicializada.
+A aplicação Rails 8.1.3 foi incorporada à raiz como `CompanyFinance`, sem sobrescrever o repositório spec-driven. O ambiente continua canônico via Dev Container; nenhuma ferramenta Ruby foi instalada ou executada diretamente no host. Não há funcionalidade de domínio, CI ou deploy.
 
-## Último trabalho realizado
+O scaffold foi gerado primeiro em `/tmp/company_finance`, inventariado e depois incorporado pela CLI Rails com `--skip`. O diretório temporário foi removido somente após a validação.
 
-`M0-T02A` concluída com 18/18 critérios. A imagem multi-stage foi construída, `app` e `db` estão ativos, PostgreSQL está healthy, ferramentas/usuário/permissões/volumes/pós-criação foram validados e a documentação está atualizada. Nenhuma aplicação Rails foi inicializada.
+## Versões e arquitetura
+
+- Ruby 3.4.10, Bundler 2.7.2 e Rails 8.1.3 no serviço `app`.
+- PostgreSQL server 17.10 no serviço `db`; psql 15.18 no `app`.
+- PostgreSQL por hostname `db`, usuário fictício local `app`, bancos separados `company_finance_development` e `company_finance_test`.
+- Views server-side, importmap, Turbo, Stimulus e Tailwind sem Node.js.
+- Active Storage carregável, sem migrations/tabelas de comprovantes.
+- Solid Queue/Cache/Cable disponíveis sobre PostgreSQL, sem Redis e sem jobs de negócio.
+- UUID como padrão dos generators; locale `pt-BR`; timezone `America/Sao_Paulo`; BRL e formatos brasileiros; semana fixa iniciando na segunda-feira.
+- RSpec, FactoryBot, Capybara, Selenium e Chromium headless; RuboCop Rails Omakase, Brakeman e Bundler Audit.
+
+## Verificações executadas
+
+- protocolo inicial: status, branch, log, Compose `ps/config`, documentos obrigatórios e versões no container;
+- Rails generator help e geração temporária com todos os flags previstos;
+- Compose `config`, reconstrução de `app`, `up -d` e `ps`: sucesso; `db` healthy;
+- `bundle install` e `bundle check`: sucesso;
+- `db:create`, `db:prepare` e test prepare: sucesso;
+- prova de banco vazio: zero tabelas de domínio; development/test removidos, recriados e preparados via Rails;
+- RSpec: 2 exemplos, 0 falhas, incluindo Chromium headless;
+- RuboCop: 28 arquivos, 0 offenses;
+- Brakeman 8.0.5: zero warnings;
+- Bundler Audit: advisory database atualizado, zero vulnerabilidades;
+- routes, Zeitwerk, Tailwind build e assets precompile: sucesso;
+- runner: `CompanyFinance::Application`, timezone, locale, segunda-feira, UUID, Active Storage e Solid Queue confirmados;
+- `bin/setup --skip-server`: sucesso idempotente;
+- `bin/dev`: Puma e watcher Tailwind iniciaram; requisição real a `/up` retornou 200;
+- `bash -n`: sucesso nos scripts shell alterados;
+- verificador de specs: 496 IDs, zero duplicidades, referências ausentes, linhas normativas sem ID ou links quebrados;
+- `git diff --check`: sucesso.
+
+## Falhas conhecidas e limitações
+
+- duas falhas de `bin/dev` foram encontradas e corrigidas: permissão executável e watcher Tailwind não persistente sem TTY;
+- CLI `devcontainer` continua ausente no host; Compose, build e runtime foram validados e isso não bloqueia a tarefa;
+- a porta 3000 não é publicada pelo Compose; o VS Code encaminha a porta e a requisição real foi validada dentro de `app`;
+- CI ainda não existe por limite explícito desta sessão;
+- alterações permanecem não commitadas; nenhum commit foi autorizado.
+
+## Arquivos principais criados ou alterados
+
+- aplicação: `Gemfile`, `Gemfile.lock`, `app/`, `bin/`, `config/`, `db/`, `spec/`, `Procfile.dev`, `Rakefile`;
+- ambiente: `.devcontainer/compose.yaml`, `.env.example`, `.gitignore`, `.dockerignore`;
+- documentação: `README.md`, `docs/development-container.md`;
+- planejamento: `planning/tasks/M0-specification-and-scaffold.md`, `planning/ROADMAP.md`, `planning/TRACEABILITY.md`, `planning/SESSION_LOG.md`, `planning/CURRENT.md`.
 
 ## Próxima ação exata
 
-1. Em nova sessão, executar o protocolo inicial e confirmar `M0-T02A` como `DONE`.
-2. Detalhar `M0-T02B` pelo template, incluindo opções exatas de `rails new`.
-3. Executar o scaffold somente por `docker compose ... exec/run app`, nunca no host.
-4. Manter `M0-T03` e M1 fora do escopo até concluir `M0-T02B`.
-
-## Arquivos prioritários
-
-- `AGENTS.md`
-- `planning/tasks/M0-specification-and-scaffold.md`
-- `.devcontainer/Dockerfile`
-- `.devcontainer/compose.yaml`
-- `.devcontainer/devcontainer.json`
-- `.devcontainer/scripts/post-create.sh`
-- `README.md`
-- `docs/development-container.md`
-- `scripts/check_spec_requirements.sh`
-
-## Verificações conhecidas
-
-- `git status --short`: sucesso; working tree inicial limpa.
-- `git branch --show-current`: `main`.
-- `git log -1 --oneline`: `d9d96a0 feat: Revise domain specifications and introduce new requirements`.
-- `docker --version`: 29.1.2.
-- `docker compose version`: 2.40.3-desktop.1.
-- aplicação Rails ausente: `Gemfile`, `app/`, `config/` e `db/` não existem.
-- `bash scripts/check_spec_requirements.sh`: sucesso no baseline, 496 IDs.
-- `bash -n .devcontainer/scripts/post-create.sh scripts/check_spec_requirements.sh`: sucesso.
-- `docker compose -f .devcontainer/compose.yaml config`: sucesso; serviços `app` e `db`, dois volumes e nenhuma porta publicada.
-- `git diff --check`: sucesso após criar a configuração.
-- `docker compose -f .devcontainer/compose.yaml build`: sucesso; imagem `finance-manager-dev-app` construída.
-- `docker compose ... up -d`: sucesso; `app` ativo e `db` healthy.
-- ferramentas: Ruby 3.4.10, Bundler 2.7.2, Rails 8.1.3, psql 15.18, Chromium/ChromeDriver 150 e libvips 8.14.1 validados no `app`.
-- usuário/permissões: `vscode` UID/GID `1000:1000`, arquivo temporário no bind mount criado com ownership `1000:1000`.
-- pós-criação executado duas vezes sem gerar aplicação ou exigir `Gemfile`.
-- PostgreSQL: hostname `db`, autenticação, `SELECT 1`, healthcheck e persistência após restart validados; tabela temporária removida.
-- cache de gems: escrita `1000:1000` e persistência após restart validadas; marcador removido.
-- `docker compose ... config --quiet`, build multi-stage final, `up -d`, `ps` e comandos canônicos: sucesso.
-- `python3 -m json.tool .devcontainer/devcontainer.json`: sucesso.
-- `scripts/check_spec_requirements.sh`: sucesso, 496 IDs, zero falhas.
-- `git diff --check`: sucesso final.
-- aplicação Rails ausente após todas as validações.
-
-## Bloqueios
-
-Nenhum bloqueio para planejar `M0-T02B`. A CLI `devcontainer` não está instalada; validação por essa CLI não foi executada, mas Compose e runtime foram validados integralmente.
-
-## Decisões pendentes
-
-Questões futuras não bloqueantes: `Q-002` (turnos), `Q-003` (retenção), `Q-004` (limites de upload) e `Q-015` (cardinalidade/descarte de comprovantes).
-
-## Versões e arquitetura do ambiente
-
-- app: Ruby 3.4.10 / Debian 12 Bookworm, Bundler 2.7.2, Rails CLI 8.1.3;
-- db: PostgreSQL 17.10 Bookworm; cliente psql 15.18 compatível no `app`;
-- usuário: `vscode` não root, UID/GID 1000 por padrão ajustável no build;
-- volumes: `postgres_data` e `bundle_cache` persistentes; código por bind mount;
-- ferramentas auxiliares: build-essential, Git, curl, libpq, libvips, Chromium e ChromeDriver;
-- ausentes intencionalmente: Node.js, Redis, Sidekiq, Docker socket e modo privilegiado.
-
-## Estado operacional
-
-- containers `finance-manager-dev-app-1` e `finance-manager-dev-db-1` permanecem ativos;
-- banco está healthy e não publica porta no host;
-- `.env` não foi criado nem versionado; defaults fictícios seguros foram usados.
-
-## Alterações não commitadas
-
-- `planning/CURRENT.md`
-- `planning/ROADMAP.md`
-- `planning/SESSION_LOG.md`
-- `planning/TRACEABILITY.md`
-- `planning/tasks/M0-specification-and-scaffold.md`
-- `planning/tasks/M1-foundation.md`
-- `.devcontainer/Dockerfile`
-- `.devcontainer/compose.yaml`
-- `.devcontainer/devcontainer.json`
-- `.devcontainer/scripts/post-create.sh`
-- `.dockerignore`
-- `.gitignore`
-- `.env.example`
-- `README.md`
-- `docs/development-container.md`
+Em nova sessão, executar o protocolo inicial do `AGENTS.md`, detalhar `M0-T03 — Configurar CI inicial` com o template e implementar o pipeline usando os mesmos comandos containerizados já validados. Não iniciar M1 nem qualquer domínio antes de concluir M0-T03.

@@ -22,7 +22,8 @@ services:
       DATABASE_PORT: "5432"
       DATABASE_USERNAME: ${POSTGRES_USER:-app}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-development_only}
-      POSTGRES_DB: ${POSTGRES_DB:-company_finance_development}
+      DATABASE_NAME: ${DATABASE_NAME:-company_finance_development}
+      DATABASE_TEST_NAME: ${DATABASE_TEST_NAME:-company_finance_test}
       RAILS_VERSION: ${RAILS_VERSION:-8.1.3}
       RUBY_VERSION: ${RUBY_VERSION:-3.4.10}
       BUNDLER_VERSION: ${BUNDLER_VERSION:-2.7.2}
