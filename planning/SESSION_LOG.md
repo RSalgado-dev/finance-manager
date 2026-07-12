@@ -2,6 +2,51 @@
 
 Acrescente novas sessões no topo. Não reescreva entradas antigas, salvo correção factual explícita.
 
+## 2026-07-11 21:27 — M0-T03A
+
+### Objetivo
+
+Implementar e validar localmente o CI inicial usando exclusivamente o Dev Container e um Compose isolado.
+
+### Estado inicial
+
+Branch `main`, working tree limpa, commit `3230b5a`. M0-T02 estava `DONE`; M0-T03 estava `NOT_STARTED`; `app` ativo, `db` healthy, sem `.github/` e sem `bin/ci`.
+
+### Trabalho realizado
+
+- M0-T03 subdividida em M0-T03A e M0-T03B; somente M0-T03A foi executada;
+- `ripgrep` adicionado à imagem após falha real do verificador normativo no container;
+- `bin/ci` criado com shell estrito e sequência canônica completa;
+- workflow criado para `ubuntu-24.04`, usando somente checkout oficial e Compose;
+- checkout v7.0.0 fixado pelo SHA `9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0`;
+- UID/GID do runner parametrizados, mantendo `app` não root;
+- workflow documentado sem cache, deploy, registry, secrets ou publicação de imagem;
+- M0-T03A marcada `DONE`; M0-T03B e agregadora M0-T03 permanecem pendentes de execução remota.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| build local com `ripgrep` | sucesso; aproximadamente 74 s |
+| `docker compose ... exec app bin/ci` | sucesso integral |
+| parser YAML e invariantes | sucesso; `actionlint` indisponível |
+| build isolado `--no-cache` | sucesso; aproximadamente 85 s |
+| banco isolado antes do CI | healthy; `company_finance_test` ausente |
+| usuário/permissões | `vscode` 1000:1000, workspace gravável |
+| `bin/ci` isolado | instalou 126 gems, criou test DB, passou em aproximadamente 70 s |
+| RSpec | 2 exemplos, 0 falhas |
+| RuboCop | 28 arquivos, 0 offenses |
+| Brakeman | 0 warnings |
+| Bundler Audit | advisory database atualizado, 0 vulnerabilidades |
+| specs/ Zeitwerk / Tailwind / assets / boot | sucesso |
+| teste negativo | host de banco inválido; exit code 1 propagado |
+| cleanup isolado | containers, rede e volumes removidos |
+| ambiente local após cleanup | app ativo; db healthy |
+
+### Limitações e handoff
+
+Não houve execução real no GitHub Actions, commit ou push. Próxima ação exata: obter autorização explícita, publicar o workflow, disparar/observar um run, inspecionar logs e registrar URL ou ID como evidência de M0-T03B. Não iniciar M1 antes disso.
+
 ## 2026-07-11 21:00 — M0-T02B
 
 ### Objetivo

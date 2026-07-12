@@ -383,16 +383,201 @@ Não iniciar `M0-T03` nesta sessão.
 
 ## M0-T03 — Configurar CI inicial
 
-Status: `NOT_STARTED`
+Status: `IN_PROGRESS`
+
+### Objetivo
+
+Entregar CI containerizado reprodutível, validado localmente e posteriormente comprovado no GitHub Actions.
 
 ### Dependências
 
-M0-T02B.
+M0-T02 concluída.
+
+### Subtarefas
+
+- `M0-T03A` — Implementar e validar localmente o workflow de CI.
+- `M0-T03B` — Verificar execução real no GitHub Actions.
+
+`M0-T03B` depende de `M0-T03A` concluída e de autorização explícita para commit e push.
+
+### Critérios de aceite agregados
+
+- [x] Workflow localmente validado em ambiente Compose isolado.
+- [ ] Execução real verde no GitHub Actions registrada com link ou identificador.
+- [x] Testes, lint, segurança, specs, autoload, assets e boot falham o pipeline quando falham.
+- [x] Aplicação e banco usam exclusivamente a topologia do Dev Container.
+
+---
+
+## M0-T03A — Implementar e validar localmente o workflow de CI
+
+Status: `DONE`
+
+### Objetivo
+
+Criar um workflow GitHub Actions fino e um comando `bin/ci` canônico, executados exclusivamente pelos serviços `app` e `db` do Compose, e comprová-los localmente com projeto e volumes efêmeros.
+
+### Requisitos relacionados
+
+- `OPS-CI-001` a `OPS-CI-004`
+- `TEST-000`, `TEST-EVID-001`
+- `NFR-MNT-001`, `NFR-MNT-002`
+
+### Dependências
+
+- `M0-T02`
+
+### Dentro do escopo
+
+- `.github/workflows/ci.yml` em `ubuntu-24.04`, permissões mínimas, concorrência e timeout;
+- somente `actions/checkout` estável, fixada por SHA completo;
+- build e execução pelos serviços do `.devcontainer/compose.yaml`;
+- `bin/ci` com specs, dependências, banco test, RSpec, RuboCop, Brakeman, Bundler Audit, Zeitwerk, Tailwind, assets e boot;
+- parametrização UID/GID e dependência de sistema mínima para escrita e verificações no container;
+- cleanup incondicional no workflow;
+- simulação local isolada por project name e volumes novos;
+- documentação e evidência real.
+
+### Fora do escopo
+
+- execução remota, commit, push ou alteração de branch protection;
+- cache remoto, registry, publicação de imagem, deploy ou secrets de produção;
+- Dependabot, cobertura, serviços pagos ou actions adicionais;
+- funcionalidade de domínio ou início de M1.
 
 ### Critérios de aceite
 
-- [ ] GitHub Actions executa testes.
-- [ ] RuboCop executa.
-- [ ] Brakeman executa.
-- [ ] Bundler Audit executa.
-- [ ] Pipeline falha corretamente.
+- [x] `.github/workflows/ci.yml` existe e seu YAML é válido.
+- [x] Push para `main`, pull request e `workflow_dispatch` estão configurados; `pull_request_target` não é usado.
+- [x] Permissões são `contents: read`; concorrência e timeout estão configurados.
+- [x] Runner é `ubuntu-24.04` e actions usam SHA completo de release estável.
+- [x] Runner hospeda somente Docker; Ruby e PostgreSQL não são instalados ou duplicados fora do Compose.
+- [x] Comandos da aplicação usam `app`; banco usa `db` e hostname interno.
+- [x] `bin/ci` existe, é executável, não interativo e interrompe na primeira falha.
+- [x] Banco de teste novo é preparado sem tocar no banco development.
+- [x] Verificador de specs, RSpec, RuboCop, Brakeman e Bundler Audit passam.
+- [x] Zeitwerk, Tailwind, assets e runner de boot passam.
+- [x] Cleanup do workflow executa mesmo após falha.
+- [x] Simulação completa usa project name/volumes isolados e retorna zero.
+- [x] Ambiente local original continua operacional após a simulação.
+- [x] README documenta workflow, `bin/ci`, isolamento e limite da validação local.
+- [x] `bash -n`, validação estrutural do workflow e `git diff --check` passam.
+- [x] Nenhuma funcionalidade de domínio é adicionada.
+
+### Plano técnico
+
+1. Corrigir apenas as dependências sistêmicas necessárias ao CI containerizado e criar `bin/ci`.
+2. Validar `bin/ci` no ambiente local existente.
+3. Criar workflow fino com action oficial fixada por SHA e cleanup incondicional.
+4. Validar sintaxe e invariantes do YAML sem instalar ferramenta global no host.
+5. Simular runner limpo com project name, UID/GID e volumes isolados.
+6. Confirmar preservação do Compose local e registrar evidências.
+
+### Riscos e casos de borda
+
+- `scripts/check_spec_requirements.sh` requer `rg`, inicialmente ausente na imagem;
+- UID/GID do GitHub runner divergirem dos defaults locais;
+- bind mount ou bundle volume impedir escrita pelo usuário não root;
+- isolamento incompleto reutilizar volumes locais e mascarar banco/gems ausentes;
+- YAML válido não equivaler a execução remota verde;
+- atualização do advisory database depender de rede;
+- build limpo ser demorado sem cache remoto.
+
+### Verificação obrigatória
+
+```bash
+docker compose -f .devcontainer/compose.yaml exec app bash scripts/check_spec_requirements.sh
+docker compose -f .devcontainer/compose.yaml exec app bin/ci
+docker compose --project-name company_finance_ci_validation -f .devcontainer/compose.yaml build app
+docker compose --project-name company_finance_ci_validation -f .devcontainer/compose.yaml up -d --wait db
+docker compose --project-name company_finance_ci_validation -f .devcontainer/compose.yaml run --rm app bin/ci
+docker compose --project-name company_finance_ci_validation -f .devcontainer/compose.yaml down --volumes --remove-orphans
+bash -n bin/ci .devcontainer/scripts/post-create.sh
+bash scripts/check_spec_requirements.sh
+git diff --check
+```
+
+### Evidência de conclusão
+
+- Baseline: branch `main`, working tree limpa, commit `3230b5a`; `app` ativo e `db` healthy.
+- Boot inicial: `CompanyFinance::Application` confirmado dentro de `app`.
+- Falha inicial reproduzida: verificador de specs retornou `rg: command not found` dentro de `app`; `ripgrep` deve integrar a imagem para o mesmo comando funcionar no CI.
+- `actions/checkout` consultada na API oficial: release `v7.0.0`, publicada, não draft e não prerelease; SHA `9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0`.
+- `ripgrep` adicionado à imagem e `bin/ci` criado com shell estrito, etapas legíveis e todas as verificações obrigatórias.
+- Build local após adicionar `ripgrep`: sucesso em aproximadamente 74 segundos; `rg 13.0.0` confirmado no container.
+- `docker compose ... exec app bin/ci`: sucesso no ambiente existente; 496 requisitos válidos, 2 specs verdes, RuboCop sem offenses, Brakeman sem warnings, Bundler Audit sem vulnerabilidades, Zeitwerk/Tailwind/assets/boot verdes.
+- Workflow criado com runner `ubuntu-24.04`, `contents: read`, concorrência, timeout de 30 minutos, checkout v7.0.0 por SHA, UID/GID dinâmicos, serviços Compose e cleanup `always()`.
+- `actionlint` não estava disponível; parser YAML executado dentro de `app` confirmou triggers, permissões, concorrência, runner, timeout, SHA de 40 caracteres e cleanup. Busca negativa confirmou ausência de permissões extras, `pull_request_target`, setup Ruby e PostgreSQL duplicado.
+- Simulação `company_finance_ci_validation`: build sem cache em aproximadamente 85 segundos; `db` iniciou healthy em volume novo; banco `company_finance_test` inicialmente ausente; usuário `vscode` 1000:1000 escreveu no bind mount.
+- `bin/ci` isolado instalou 126 gems no volume novo, criou apenas o banco test e passou todos os checks em aproximadamente 70 segundos.
+- Cleanup removeu containers, rede e dois volumes isolados. `finance-manager-dev-app-1` permaneceu ativo e `finance-manager-dev-db-1` permaneceu healthy.
+- Teste negativo controlado com `DATABASE_HOST=ci-intentional-invalid-host`: `bin/ci` parou em `db:prepare` e propagou exit code 1.
+- Rodada final normal de `bin/ci`: sucesso integral; 2 specs, zero offenses, zero warnings e zero vulnerabilidades.
+- Nenhuma instalação de Ruby, Rails, Bundler, gems ou PostgreSQL ocorreu diretamente no host; o workflow também não contém essas instalações.
+
+### Próximo passo
+
+Manter `M0-T03B` como `NOT_STARTED`. Após autorização explícita, fazer commit/push, disparar ou observar o workflow e registrar URL/ID, logs verdes, banco novo e cleanup.
+
+---
+
+## M0-T03B — Verificar execução real no GitHub Actions
+
+Status: `NOT_STARTED`
+
+### Objetivo
+
+Comprovar uma execução remota verde do workflow já validado localmente e registrar evidência verificável.
+
+### Requisitos relacionados
+
+- `OPS-CI-001` a `OPS-CI-004`
+- `TEST-EVID-001`
+
+### Dependências
+
+- `M0-T03A`
+- commit e push explicitamente autorizados
+
+### Dentro do escopo
+
+- disparar por push, pull request ou `workflow_dispatch`;
+- verificar steps, containers, banco novo, cleanup e permissões;
+- registrar link ou identificador do run.
+
+### Fora do escopo
+
+- alterar o workflow sem retornar a M0-T03A;
+- deploy, publicação de imagem, secrets ou branch protection.
+
+### Critérios de aceite
+
+- [ ] Workflow está presente no repositório remoto.
+- [ ] Run real termina verde e possui link ou identificador registrado.
+- [ ] Logs confirmam uso de `app`, `db` vazio e cleanup.
+- [ ] Nenhuma permissão ou secret adicional foi concedido.
+
+### Plano técnico
+
+1. Obter autorização para commit e push.
+2. Publicar o workflow e disparar uma execução.
+3. Inspecionar todos os steps e registrar evidência remota.
+
+### Riscos e casos de borda
+
+- permissões para commit/push não estão concedidas nesta sessão;
+- diferenças reais do GitHub-hosted runner só aparecem remotamente.
+
+### Verificação obrigatória
+
+```bash
+# Inspecionar no GitHub Actions o run disparado e registrar URL/ID e conclusão.
+```
+
+### Evidência de conclusão
+
+Não iniciada: workflow ainda não foi commitado nem enviado ao GitHub.
+
+### Próximo passo
+
+Após M0-T03A, solicitar autorização para commit/push e então verificar um run real; não inferir sucesso remoto da simulação local.

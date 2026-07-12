@@ -85,6 +85,36 @@ docker compose -f .devcontainer/compose.yaml exec app bin/rails assets:precompil
 
 RSpec usa o banco `company_finance_test`. O smoke test de sistema executa Chromium headless já instalado na imagem.
 
+## Integração contínua
+
+O workflow inicial está em `.github/workflows/ci.yml`. Ele é disparado por push em `main`, pull request ou execução manual (`workflow_dispatch`) e usa `ubuntu-24.04` somente como host de Docker. Ruby, Rails, Bundler, gems e PostgreSQL permanecem nos serviços `app` e `db` do mesmo Compose usado em desenvolvimento.
+
+O comando canônico concentra a lógica do pipeline:
+
+```bash
+docker compose -f .devcontainer/compose.yaml exec app bin/ci
+```
+
+`bin/ci` verifica requisitos normativos, dependências, banco test, RSpec, RuboCop, Brakeman, Bundler Audit, Zeitwerk, Tailwind, assets e boot da aplicação. Ele interrompe na primeira falha.
+
+Para simular um runner novo sem reutilizar ou apagar os volumes locais, use um project name exclusivo:
+
+```bash
+export COMPOSE_PROJECT_NAME=company_finance_ci_validation
+export LOCAL_UID="$(id -u)"
+export LOCAL_GID="$(id -g)"
+
+docker compose -f .devcontainer/compose.yaml build app
+docker compose -f .devcontainer/compose.yaml up -d --wait db
+docker compose -f .devcontainer/compose.yaml run --rm --no-TTY app bin/ci
+docker compose -f .devcontainer/compose.yaml down --volumes --remove-orphans
+unset COMPOSE_PROJECT_NAME LOCAL_UID LOCAL_GID
+```
+
+O último comando remove somente os recursos do project name isolado. Confirme o valor de `COMPOSE_PROJECT_NAME` antes de executá-lo.
+
+A validação local comprova a configuração e a execução containerizada, mas não equivale a um run real do GitHub Actions. Após commit e push autorizados, ainda será necessário registrar uma execução remota verde. O workflow não faz deploy, não publica imagens e não usa registry ou secrets de produção. Não adicione badge antes dessa comprovação remota.
+
 ## Banco e arquivos
 
 Desenvolvimento e teste usam bancos separados e acessam PostgreSQL pelo hostname interno `db`. Credenciais de `.env.example` são apenas valores fictícios locais. Produção será configurada por `DATABASE_URL` e URLs específicas dos adaptadores Solid.

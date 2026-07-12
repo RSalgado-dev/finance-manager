@@ -33,6 +33,8 @@ Atualizar conforme a implementação avançar.
 | NFR-MNT-001, NFR-MNT-002 | M0-T02B | `README.md`, `docs/development-container.md`, `.rubocop.yml` | documentação revisada e RuboCop sem offenses | VERIFIED |
 | OPS-DEV-010 | M0-T02B | `Gemfile`, `config/queue.yml`, `db/queue_schema.rb` | boot de `SolidQueue`; ausência de Redis | IMPLEMENTED |
 | OPS-CI-003 | M0-T02B, M0-T03 | `Gemfile.lock`, `.ruby-version`, Dev Container | `bundle check` e versões no runtime | VERIFIED |
+| OPS-CI-001, OPS-CI-004 | M0-T03A, M0-T03B | `.github/workflows/ci.yml`, `bin/ci` | execução local, simulação isolada e teste negativo; run remoto pendente | TESTED |
+| OPS-CI-002 | tarefa futura de otimização após medição | sem cache remoto nesta versão | build sem cache medido em aproximadamente 85 segundos | SPECIFIED |
 | OPS-DEP-001 | M9-T01 | — | — | SPECIFIED |
 
 Estados: `SPECIFIED`, `IMPLEMENTED`, `TESTED`, `VERIFIED`, `DEPRECATED`.

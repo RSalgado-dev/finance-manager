@@ -26,6 +26,7 @@ RUN apt-get update \
       libpq-dev \
       libvips-tools \
       postgresql-client \
+      ripgrep \
       shared-mime-info \
       tzdata \
     && rm -rf /var/lib/apt/lists/* \

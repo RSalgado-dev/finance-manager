@@ -1,70 +1,60 @@
 # Estado atual
 
-Atualizado em: `2026-07-11 21:00 America/Sao_Paulo`
+Atualizado em: `2026-07-11 21:27 America/Sao_Paulo`
 
 ## Estado do repositório
 
-- Milestone: `M0` — `IN_PROGRESS` até concluir o CI inicial.
-- Última tarefa trabalhada: `M0-T02B` — `DONE`.
-- Tarefa agregadora `M0-T02`: `DONE` (`M0-T02A` e `M0-T02B` concluídas).
-- Próxima tarefa: `M0-T03` — `NOT_STARTED`.
-- Estado operacional: `RAILS_SCAFFOLD_VERIFIED`.
+- Milestone `M0`: `IN_PROGRESS`; não promover antes da execução remota do CI.
+- Última tarefa: `M0-T03A` — `DONE`.
+- `M0-T03B`: `NOT_STARTED`; depende de commit/push autorizados e run real.
+- Agregadora `M0-T03`: `IN_PROGRESS`.
+- `M0-T01`, `M0-T02A`, `M0-T02B` e `M0-T02`: `DONE`.
 - Branch: `main`.
-- Último commit: `9e7de69 feat: Implementar Dev Container e atualizar planejamento para M0 e M1`.
-- Working tree inicial: limpa; atual: scaffold e documentação de `M0-T02B` não commitados.
+- Último commit: `3230b5a Add custom 500 error page, application icon, and robots.txt`.
+- Working tree inicial: limpa; atual: alterações de M0-T03A não commitadas.
 
-## Resultado
+## Resultado de M0-T03A
 
-A aplicação Rails 8.1.3 foi incorporada à raiz como `CompanyFinance`, sem sobrescrever o repositório spec-driven. O ambiente continua canônico via Dev Container; nenhuma ferramenta Ruby foi instalada ou executada diretamente no host. Não há funcionalidade de domínio, CI ou deploy.
+O CI local foi implementado com `.github/workflows/ci.yml` e `bin/ci`. GitHub Actions usa `ubuntu-24.04` apenas como host Docker; aplicação e PostgreSQL usam os serviços `app` e `db` de `.devcontainer/compose.yaml`. Nenhuma ferramenta Ruby ou banco é instalado no runner.
 
-O scaffold foi gerado primeiro em `/tmp/company_finance`, inventariado e depois incorporado pela CLI Rails com `--skip`. O diretório temporário foi removido somente após a validação.
+O workflow possui push em `main`, pull request e `workflow_dispatch`, `contents: read`, concorrência com cancelamento, timeout de 30 minutos e cleanup `always()`. A única action é `actions/checkout` v7.0.0, SHA `9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0`, confirmada como release oficial não prerelease.
 
-## Versões e arquitetura
+`LOCAL_UID`/`LOCAL_GID` são obtidos do runner e enviados ao build. O container permanece não root e o volume de gems/workspace fica gravável. `ripgrep` foi a única dependência sistêmica acrescentada.
 
-- Ruby 3.4.10, Bundler 2.7.2 e Rails 8.1.3 no serviço `app`.
-- PostgreSQL server 17.10 no serviço `db`; psql 15.18 no `app`.
-- PostgreSQL por hostname `db`, usuário fictício local `app`, bancos separados `company_finance_development` e `company_finance_test`.
-- Views server-side, importmap, Turbo, Stimulus e Tailwind sem Node.js.
-- Active Storage carregável, sem migrations/tabelas de comprovantes.
-- Solid Queue/Cache/Cable disponíveis sobre PostgreSQL, sem Redis e sem jobs de negócio.
-- UUID como padrão dos generators; locale `pt-BR`; timezone `America/Sao_Paulo`; BRL e formatos brasileiros; semana fixa iniciando na segunda-feira.
-- RSpec, FactoryBot, Capybara, Selenium e Chromium headless; RuboCop Rails Omakase, Brakeman e Bundler Audit.
+## Evidências executadas
 
-## Verificações executadas
+- baseline: `CompanyFinance::Application` iniciou; o verificador inicialmente falhou em `app` por ausência de `rg`;
+- build local após ajuste: sucesso em aproximadamente 74 s; ripgrep 13.0.0;
+- `bin/ci` no ambiente existente: sucesso;
+- workflow: parser YAML dentro de `app` e invariantes de triggers, permissões, runner, timeout, SHA e cleanup passaram; `actionlint` não estava disponível;
+- simulação isolada `company_finance_ci_validation`: build `--no-cache` em aproximadamente 85 s, banco/volume de gems novos e banco test inicialmente ausente;
+- permissão: usuário `vscode` 1000:1000 escreveu no workspace;
+- `bin/ci` isolado: instalou 126 gems, criou `company_finance_test` e passou em aproximadamente 70 s;
+- verificações: 496 requisitos válidos; 2 specs/0 falhas; 28 arquivos RuboCop/0 offenses; Brakeman/0 warnings; Bundler Audit/0 vulnerabilidades; Zeitwerk, Tailwind, assets e boot verdes;
+- teste negativo: host PostgreSQL inválido interrompeu `db:prepare` e retornou exit code 1;
+- cleanup: containers, rede e volumes isolados removidos; `finance-manager-dev` permaneceu com app ativo e db healthy;
+- nenhuma funcionalidade de domínio, deploy, cache remoto, registry ou publicação de imagem foi adicionada.
 
-- protocolo inicial: status, branch, log, Compose `ps/config`, documentos obrigatórios e versões no container;
-- Rails generator help e geração temporária com todos os flags previstos;
-- Compose `config`, reconstrução de `app`, `up -d` e `ps`: sucesso; `db` healthy;
-- `bundle install` e `bundle check`: sucesso;
-- `db:create`, `db:prepare` e test prepare: sucesso;
-- prova de banco vazio: zero tabelas de domínio; development/test removidos, recriados e preparados via Rails;
-- RSpec: 2 exemplos, 0 falhas, incluindo Chromium headless;
-- RuboCop: 28 arquivos, 0 offenses;
-- Brakeman 8.0.5: zero warnings;
-- Bundler Audit: advisory database atualizado, zero vulnerabilidades;
-- routes, Zeitwerk, Tailwind build e assets precompile: sucesso;
-- runner: `CompanyFinance::Application`, timezone, locale, segunda-feira, UUID, Active Storage e Solid Queue confirmados;
-- `bin/setup --skip-server`: sucesso idempotente;
-- `bin/dev`: Puma e watcher Tailwind iniciaram; requisição real a `/up` retornou 200;
-- `bash -n`: sucesso nos scripts shell alterados;
-- verificador de specs: 496 IDs, zero duplicidades, referências ausentes, linhas normativas sem ID ou links quebrados;
-- `git diff --check`: sucesso.
+## Arquivos alterados
 
-## Falhas conhecidas e limitações
+- `.github/workflows/ci.yml`
+- `bin/ci`
+- `.devcontainer/Dockerfile`
+- `README.md`
+- `docs/development-container.md`
+- `planning/tasks/M0-specification-and-scaffold.md`
+- `planning/ROADMAP.md`
+- `planning/TRACEABILITY.md`
+- `planning/SESSION_LOG.md`
+- `planning/CURRENT.md`
 
-- duas falhas de `bin/dev` foram encontradas e corrigidas: permissão executável e watcher Tailwind não persistente sem TTY;
-- CLI `devcontainer` continua ausente no host; Compose, build e runtime foram validados e isso não bloqueia a tarefa;
-- a porta 3000 não é publicada pelo Compose; o VS Code encaminha a porta e a requisição real foi validada dentro de `app`;
-- CI ainda não existe por limite explícito desta sessão;
-- alterações permanecem não commitadas; nenhum commit foi autorizado.
+## Limitações reais
 
-## Arquivos principais criados ou alterados
-
-- aplicação: `Gemfile`, `Gemfile.lock`, `app/`, `bin/`, `config/`, `db/`, `spec/`, `Procfile.dev`, `Rakefile`;
-- ambiente: `.devcontainer/compose.yaml`, `.env.example`, `.gitignore`, `.dockerignore`;
-- documentação: `README.md`, `docs/development-container.md`;
-- planejamento: `planning/tasks/M0-specification-and-scaffold.md`, `planning/ROADMAP.md`, `planning/TRACEABILITY.md`, `planning/SESSION_LOG.md`, `planning/CURRENT.md`.
+- GitHub Actions não foi executado: workflow não foi commitado nem enviado ao remoto.
+- `actionlint` não está instalado; validação local usou parser YAML no container e checagens estruturais, sem alegar equivalência a um run remoto.
+- não há cache remoto; o build limpo medido em cerca de 85 segundos pode orientar otimização futura.
+- alterações não commitadas; não houve autorização para commit ou push.
 
 ## Próxima ação exata
 
-Em nova sessão, executar o protocolo inicial do `AGENTS.md`, detalhar `M0-T03 — Configurar CI inicial` com o template e implementar o pipeline usando os mesmos comandos containerizados já validados. Não iniciar M1 nem qualquer domínio antes de concluir M0-T03.
+Após autorização explícita, criar commit com M0-T03A, fazer push, disparar ou observar o workflow por push/pull request/`workflow_dispatch`, confirmar todos os steps verdes e o cleanup nos logs, e registrar a URL ou ID do run em M0-T03B. Manter M0-T03 `IN_PROGRESS` e não iniciar M1 até essa evidência remota existir.

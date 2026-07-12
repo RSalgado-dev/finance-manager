@@ -35,7 +35,9 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 - `M0-T02A`: `DONE` — Dev Container construído e validado.
 - `M0-T02B`: `DONE` — scaffold Rails `CompanyFinance` incorporado e validado exclusivamente no container.
 - `M0-T02`: `DONE` — tarefa agregadora concluída.
-- `M0-T03`: `NOT_STARTED` — próxima tarefa; CI inicial ainda não foi configurado.
+- `M0-T03`: `IN_PROGRESS` — agregadora subdividida; `M0-T03A` implementa/valida localmente e `M0-T03B` exige execução remota após commit/push autorizado.
+- `M0-T03A`: `DONE` — workflow e comando canônico validados localmente, inclusive em Compose isolado.
+- `M0-T03B`: `NOT_STARTED` — depende de `M0-T03A` e de publicação autorizada do workflow.
 
 ## Regra de passagem
 

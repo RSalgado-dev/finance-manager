@@ -9,7 +9,7 @@ O Compose define dois serviços:
 
 Não há Ruby no host, Redis, Sidekiq, Node.js, socket Docker ou modo privilegiado. A aplicação `CompanyFinance` usa Solid Queue com PostgreSQL, sem jobs de negócio nesta fase.
 
-Chromium e ChromeDriver atendem aos system specs headless; libvips atende ao processamento futuro de imagens do Active Storage. RSpec, FactoryBot, Capybara, Selenium, RuboCop, Brakeman e Bundler Audit são executados somente em `app`.
+Chromium e ChromeDriver atendem aos system specs headless; libvips atende ao processamento futuro de imagens do Active Storage. Ripgrep atende ao verificador normativo. RSpec, FactoryBot, Capybara, Selenium, RuboCop, Brakeman e Bundler Audit são executados somente em `app`.
 
 ## Comandos canônicos
 
@@ -77,3 +77,9 @@ Se falhar:
 O usuário `vscode` é construído com `LOCAL_UID` e `LOCAL_GID`, ambos `1000` por padrão. Em hosts com valores diferentes, ajuste `.env` antes do build e reconstrua `app`. O código permanece no bind mount do host; gems e banco usam volumes separados.
 
 O socket Docker não é montado e nenhum serviço usa `privileged`.
+
+## CI containerizado
+
+GitHub Actions reutiliza este Dockerfile e este Compose. O runner informa `LOCAL_UID` e `LOCAL_GID` como argumentos de build, mantendo `app` não root e alinhando os arquivos gerados ao dono do checkout efêmero.
+
+O workflow inicia `db` em volumes novos e executa `bin/ci` por `docker compose run --rm --no-TTY app`. A etapa final usa `down --volumes --remove-orphans` com condição `always()`. Em validações locais, sempre use um project name exclusivo para não atingir `finance-manager-dev`.
