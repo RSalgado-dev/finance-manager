@@ -1,0 +1,13 @@
+<% if flash.any? %>
+  <div class="mb-6 space-y-3" aria-label="Mensagens do sistema">
+    <% flash.each do |type, message| %>
+      <% next if message.blank? %>
+      <% presentation = flash_presentation(type) %>
+
+      <div class="flash-message <%= presentation.fetch(:classes) %>" role="<%= presentation.fetch(:role) %>" aria-atomic="true" data-flash-kind="<%= type %>">
+        <strong class="font-semibold"><%= presentation.fetch(:label) %>:</strong>
+        <span><%= sanitize(message.to_s, tags: [], attributes: []) %></span>
+      </div>
+    <% end %>
+  </div>
+<% end %>

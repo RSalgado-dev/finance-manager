@@ -1,0 +1,12 @@
+<% if object.errors.any? %>
+  <% error_id = local_assigns.fetch(:id, "form-errors") %>
+
+  <section class="form-error-summary" role="alert" aria-labelledby="<%= error_id %>-title" id="<%= error_id %>">
+    <h2 id="<%= error_id %>-title" class="font-semibold"><%= form_error_summary(object.errors.count) %></h2>
+    <ul class="mt-2 list-disc space-y-1 pl-5">
+      <% object.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

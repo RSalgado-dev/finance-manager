@@ -1,5 +1,7 @@
 # M0 — Especificação e scaffold
 
+Status: `VERIFIED`
+
 ## M0-T01 — Validar estrutura de especificações
 
 Status: `DONE`
@@ -383,7 +385,7 @@ Não iniciar `M0-T03` nesta sessão.
 
 ## M0-T03 — Configurar CI inicial
 
-Status: `IN_PROGRESS`
+Status: `DONE`
 
 ### Objetivo
 
@@ -403,7 +405,7 @@ M0-T02 concluída.
 ### Critérios de aceite agregados
 
 - [x] Workflow localmente validado em ambiente Compose isolado.
-- [ ] Execução real verde no GitHub Actions registrada com link ou identificador.
+- [x] Execução real verde no GitHub Actions registrada com link ou identificador.
 - [x] Testes, lint, segurança, specs, autoload, assets e boot falham o pipeline quando falham.
 - [x] Aplicação e banco usam exclusivamente a topologia do Dev Container.
 
@@ -523,7 +525,7 @@ Manter `M0-T03B` como `NOT_STARTED`. Após autorização explícita, fazer commi
 
 ## M0-T03B — Verificar execução real no GitHub Actions
 
-Status: `NOT_STARTED`
+Status: `DONE`
 
 ### Objetivo
 
@@ -537,7 +539,7 @@ Comprovar uma execução remota verde do workflow já validado localmente e regi
 ### Dependências
 
 - `M0-T03A`
-- commit e push explicitamente autorizados
+- commit e push realizados manualmente pelo responsável
 
 ### Dentro do escopo
 
@@ -552,10 +554,24 @@ Comprovar uma execução remota verde do workflow já validado localmente e regi
 
 ### Critérios de aceite
 
-- [ ] Workflow está presente no repositório remoto.
-- [ ] Run real termina verde e possui link ou identificador registrado.
-- [ ] Logs confirmam uso de `app`, `db` vazio e cleanup.
-- [ ] Nenhuma permissão ou secret adicional foi concedido.
+- [x] Workflow está presente no GitHub.
+- [x] Execução remota foi disparada.
+- [x] Job foi concluído com sucesso.
+- [x] Comandos foram executados dentro do container `app`.
+- [x] PostgreSQL iniciou e o banco de teste foi criado do zero.
+- [x] Verificador normativo foi aprovado.
+- [x] RSpec foi aprovado.
+- [x] RuboCop foi aprovado.
+- [x] Brakeman foi aprovado.
+- [x] Bundler Audit foi aprovado.
+- [x] Zeitwerk foi aprovado.
+- [x] Tailwind foi aprovado.
+- [x] Assets foram aprovados.
+- [x] Boot da aplicação foi aprovado.
+- [x] Cleanup foi executado com sucesso.
+- [x] Commit SHA foi registrado.
+- [x] URL e ID do run foram registrados.
+- [x] Nenhuma permissão ou secret adicional foi concedido.
 
 ### Plano técnico
 
@@ -576,8 +592,62 @@ Comprovar uma execução remota verde do workflow já validado localmente e regi
 
 ### Evidência de conclusão
 
-Não iniciada: workflow ainda não foi commitado nem enviado ao GitHub.
+- Ambiente: GitHub Actions; runner `ubuntu-24.04`; workflow `.github/workflows/ci.yml`.
+- Run: `29173802602`; URL: https://github.com/RSalgado-dev/finance-manager/actions/runs/29173802602.
+- Job: `86599229166`, nome `ci`, conclusão `success`.
+- Commit: `a1cb0e7554c69ce3ee6dbe03c7bb4f17e6de4950`; o mesmo SHA é `HEAD`, `origin/main` e o `head_sha` do run.
+- Evento: `push`; branch: `main`; tentativa: 1.
+- Início: `2026-07-12T00:29:56Z` (`2026-07-11 21:29:56 America/Sao_Paulo`); conclusão registrada em `2026-07-12T00:32:01Z`.
+- Etapas de checkout, UID/GID, validação Compose, build da imagem, PostgreSQL limpo, `Run project CI` e cleanup terminaram com `success`.
+- A etapa `Run project CI` executou `docker compose ... run --rm --no-TTY app bin/ci`; o serviço PostgreSQL foi iniciado pelo Compose e o banco test foi criado do zero.
+- Evidência fornecida pelo responsável: Rails 8.1.3; RSpec `2 examples, 0 failures`; RuboCop `28 files inspected, no offenses detected`; Brakeman 8.0.5 com `0 errors` e `0 security warnings`; Bundler Audit `No vulnerabilities found`; Zeitwerk `All is good!`; Tailwind 4.3.2 e assets concluídos; boot `CompanyFinance::Application`; advisory database atualizado e consultado.
+- A mensagem `CI local concluído com sucesso.` é a saída padronizada de `bin/ci` dentro do run remoto e não foi tratada como execução local.
+- Cleanup confirmado pela API do GitHub: step `Clean up containers and volumes`, com `if: always()`, executou o comando documentado `down --volumes --remove-orphans` e terminou `success`.
+- Commit e push foram realizados manualmente pelo responsável; o Codex apenas consultou e registrou a evidência, sem executar essas ações.
 
 ### Próximo passo
 
-Após M0-T03A, solicitar autorização para commit/push e então verificar um run real; não inferir sucesso remoto da simulação local.
+Executar uma sessão independente de revisão do milestone M0 antes de iniciar M1.
+
+---
+
+## Verificação independente do milestone M0
+
+Verificada em 2026-07-12, sem implementação de funcionalidades ou alteração de requisitos.
+
+### Critérios de promoção
+
+- [x] `M0-T01` revalidada.
+- [x] `M0-T02A` revalidada em Compose isolado.
+- [x] `M0-T02B` revalidada sobre banco vazio.
+- [x] `M0-T03A` revalidada pelo workflow, pelo `bin/ci` e por execução local equivalente.
+- [x] `M0-T03B` revalidada pela API pública do GitHub e pela evidência detalhada versionada do responsável.
+- [x] Specs consistentes: 15 arquivos normativos, 496 requisitos e zero falhas estruturais.
+- [x] Testes, lint, segurança, Zeitwerk, Tailwind, assets e boot aprovados.
+- [x] Dev Container não root, conexão pelo hostname `db`, volumes e healthcheck aprovados.
+- [x] Cleanup local isolado e cleanup remoto confirmados.
+- [x] Documentação coerente e ausência de implementação antecipada de M1 ou domínio confirmadas.
+- [x] Nenhum bloqueio crítico aberto para M0.
+
+### Evidência da revisão
+
+- baseline: branch `main`; `HEAD` e `origin/main` locais em `a1cb0e7554c69ce3ee6dbe03c7bb4f17e6de4950`; cinco arquivos de planejamento já modificados pela sessão de M0-T03B foram preservados;
+- especificações: leitura integral dos documentos obrigatórios, 15 specs normativas, brief histórico, cobertura de origem e quatro ADRs aceitos; `bash scripts/check_spec_requirements.sh` retornou 15/496/0/0/0/0;
+- Dev Container: configuração Compose válida, build de `app` aprovado, PostgreSQL 17.10 healthy, Ruby 3.4.10, Bundler 2.7.2, Rails 8.1.3 e psql 15.18; usuário `vscode` 1000:1000 não root; conexão `SELECT` por `db` aprovada;
+- volume novo: o primeiro `rails --version` tentou carregar o bundle ainda ausente e falhou com `Bundler::GemNotFound`; após o passo obrigatório `bundle check || bundle install`, o comando passou e o pós-criação passou duas vezes, sem indicar dependência de estado residual;
+- banco vazio: antes do Rails havia somente o banco development inicial do PostgreSQL e zero tabelas; development/test foram preparados, removidos no projeto isolado, confirmados ausentes e recriados novamente com sucesso;
+- boot: módulo `CompanyFinance::Application`, timezone `America/Sao_Paulo`, locale `pt-BR`, semana na segunda-feira, UUID de generator, Active Storage e Solid Queue sem Redis confirmados; routes e Zeitwerk aprovados;
+- qualidade: RSpec 2 exemplos/0 falhas; RuboCop 28 arquivos/0 offenses; Brakeman 8.0.5 com 0 erros/0 warnings; Bundler Audit com 1.200 advisories e 0 vulnerabilidades;
+- frontend: importmap válido, Turbo/Stimulus presentes, Tailwind 4.3.2 e assets aprovados, sem Node, React ou frontend separado; requisição real a `/up` retornou HTTP 200;
+- CI: parser YAML e invariantes aprovados; `bin/ci` isolado passou integralmente e propagou todos os checks obrigatórios;
+- remoto: API pública confirmou run `29173802602`, job `86599229166`, SHA, push em `main`, runner `ubuntu-24.04`, conclusão e todos os steps como `success`, inclusive banco limpo, CI e cleanup; download dos logs retornou HTTP 403 sem autenticação, portanto os resultados internos detalhados do run permanecem atribuídos à evidência versionada fornecida pelo responsável;
+- cleanup: containers, rede e volumes de `company_finance_m0_review` removidos; `finance-manager-dev-app-1` permaneceu ativo e `finance-manager-dev-db-1` permaneceu healthy;
+- verificações finais: todos os scripts shell passaram em `bash -n`; workflow passou no parser YAML; `git diff --check` e o verificador normativo passaram.
+
+### Resultado
+
+Milestone M0 promovido de `IN_PROGRESS` para `VERIFIED`. Nenhuma tarefa foi reaberta, nenhuma correção de código foi necessária e M1 permaneceu não iniciado.
+
+### Próximo passo
+
+Em nova sessão, detalhar `M1-T01` pelo template antes de iniciá-la. Não iniciar M1 nesta sessão de verificação.

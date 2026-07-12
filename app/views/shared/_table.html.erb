@@ -1,0 +1,30 @@
+<% rows = local_assigns.fetch(:rows, []) %>
+<% empty_message = local_assigns.fetch(:empty_message, "Nenhum registro encontrado.") %>
+
+<div class="max-w-full overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm" data-ui="responsive-table">
+  <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+    <caption class="sr-only"><%= caption %></caption>
+    <thead class="bg-slate-100 text-slate-700">
+      <tr>
+        <% headers.each do |header| %>
+          <th scope="col" class="whitespace-nowrap px-4 py-3 font-semibold"><%= header %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-200 text-slate-700">
+      <% if rows.any? %>
+        <% rows.each do |row| %>
+          <tr class="hover:bg-slate-50">
+            <% row.each do |cell| %>
+              <td class="px-4 py-3 align-top"><%= cell %></td>
+            <% end %>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="<%= headers.size %>" class="px-4 py-8 text-center text-slate-600"><%= empty_message %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

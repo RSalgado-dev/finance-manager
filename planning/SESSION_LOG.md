@@ -2,6 +2,144 @@
 
 Acrescente novas sessões no topo. Não reescreva entradas antigas, salvo correção factual explícita.
 
+## 2026-07-12 09:15 — M1-T01
+
+### Objetivo
+
+Detalhar e executar a fundação visual mínima, sem iniciar M1-T02 ou implementar autenticação, tenancy ou domínio.
+
+### Estado inicial
+
+Branch `main`, M0 `VERIFIED`, M1 `NOT_STARTED`, M1-T01 ainda apenas como título e cinco arquivos documentais modificados pela revisão de M0. Compose normal com `app` ativo e `db` healthy; baseline com 2 specs/0 falhas e Tailwind aprovado.
+
+### Trabalho realizado
+
+- M1-T01 detalhada pelo template e marcada `IN_PROGRESS` antes do código; M1 marcado `IN_PROGRESS`;
+- layouts compostos `application`, `public`, `platform`, `tenant` e `print` criados sem autenticação ou contexto de empresa;
+- rota e página institucional `/` criadas em português, mantendo `/up` e sem links futuros;
+- navegação mínima, flash, cabeçalho, botões, cards, badges, estado vazio, tabela responsiva e erros de formulário implementados com ERB/helpers/Tailwind;
+- foco, contraste, redução de movimento, responsividade e mídia de impressão tratados;
+- documentação criada em `docs/ui-foundation.md`;
+- specs request, helper, view e system adicionadas; Chromium validou 360, 768 e 1280 px;
+- nenhuma gem, model, migration, rota `/platform`/tenant ou funcionalidade de M1-T02+ adicionada.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| RSpec | 23 exemplos, 0 falhas |
+| RuboCop | 34 arquivos, 0 offenses |
+| Brakeman 8.0.5 | 0 erros, 0 security warnings |
+| Bundler Audit | 1.200 advisories, 0 vulnerabilidades |
+| Zeitwerk | aprovado |
+| Tailwind/assets | Tailwind 4.3.2 e precompile aprovados |
+| `bin/ci` | sucesso integral após a última alteração de código |
+| HTTP real | `/` e `/up` retornaram 200 dentro do container |
+| specs normativas | 15 specs, 496 requisitos, zero falhas estruturais |
+| `git diff --check` | aprovado |
+
+### Falhas corrigidas
+
+- primeira rodada dos componentes: quatro falhas de expectativa, helper e tradução; todas corrigidas e conjunto focado terminou 13/0;
+- system spec detectou overflow aparente em 360 px porque o ambiente de teste servia o CSS precompilado anterior; após o `assets:precompile` obrigatório, layouts/system terminaram 8/0 nas três larguras.
+
+### Estado final
+
+M1 permanece `IN_PROGRESS`; M1-T01 está `DONE`; M1-T02 a M1-T05 permanecem `NOT_STARTED`. Alterações anteriores de M0 foram preservadas. Nenhum commit ou push foi realizado.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, detalhar M1-T02 com o template antes de qualquer implementação.
+
+## 2026-07-12 07:54 — Verificação independente de M0
+
+### Objetivo
+
+Revisar M0 de forma independente e decidir sua promoção, sem implementar M1 ou funcionalidades de domínio.
+
+### Estado inicial
+
+Branch `main`, `HEAD` e `origin/main` locais em `a1cb0e7`; cinco arquivos de planejamento já modificados pela sessão de M0-T03B. M0 estava `IN_PROGRESS`; M0-T01, M0-T02A, M0-T02B, M0-T02, M0-T03A, M0-T03B e M0-T03 estavam `DONE`; M1 não iniciado.
+
+### Trabalho realizado
+
+- documentos obrigatórios, specs normativas, cobertura histórica, riscos, questões, propostas e quatro ADRs aceitos relidos e cruzados;
+- scaffold, gems, Rails, RSpec, frontend mínimo, Solid Queue, Dev Container, workflow e `bin/ci` inspecionados sem confiar somente na evidência anterior;
+- projeto Compose `company_finance_m0_review` criado com volumes novos, validado e removido ao final;
+- banco development/test recriado duas vezes, incluindo prova explícita de zero bancos Rails antes da segunda criação;
+- evidência remota consultada novamente pela API pública do GitHub;
+- M0 promovido a `VERIFIED`; nenhuma tarefa reaberta e nenhuma funcionalidade de M1 iniciada.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| `scripts/check_spec_requirements.sh` | 15 specs, 496 requisitos, zero duplicidades, referências inexistentes, linhas normativas sem ID ou links quebrados |
+| Compose isolado `config`/`build`/`up --wait` | sucesso; `db` healthy, sem portas publicadas, privilégio ou Docker socket |
+| runtime e conexão | Ruby 3.4.10, Bundler 2.7.2, Rails 8.1.3 após instalação, psql 15.18; `vscode` 1000:1000; `SELECT` por `db` aprovado |
+| pós-criação | duas execuções consecutivas aprovadas |
+| banco vazio e boot | development/test ausentes e recriados; módulo, locale, timezone, UUID, semana, routes e Zeitwerk aprovados |
+| RSpec | 2 exemplos, 0 falhas |
+| RuboCop | 28 arquivos, 0 offenses |
+| Brakeman 8.0.5 | 0 erros, 0 warnings |
+| Bundler Audit | advisory DB com 1.200 advisories; 0 vulnerabilidades |
+| importmap/Tailwind/assets | válidos; Tailwind 4.3.2 e precompile aprovados |
+| `/up` | requisição HTTP real retornou 200 |
+| `bin/ci` isolado | sucesso integral |
+| workflow | YAML válido; triggers, permissões, concorrência, timeout, SHA, Compose e cleanup aprovados |
+| GitHub API | run `29173802602` e job `86599229166` `success`; runner `ubuntu-24.04`; todos os steps `success` |
+| logs remotos compactados | HTTP 403 sem autenticação; resultados internos detalhados atribuídos à evidência versionada do responsável |
+| cleanup | recursos isolados removidos; ambiente normal permaneceu com `app` ativo e `db` healthy |
+| shells / diff | todos os scripts passaram em `bash -n`; `git diff --check` aprovado |
+
+### Falha intermediária analisada
+
+No volume de gems recém-criado, `rails --version` antes de `bundle install` falhou porque o CLI detectou a aplicação e tentou materializar o bundle ausente. O fluxo documentado de ambiente novo instalou 126 gems; o mesmo comando passou depois, o pós-criação foi idempotente e o `bin/ci` instalaria gems quando ausentes. Não houve dependência de estado residual nem critério final não atendido.
+
+### Estado final
+
+M0 `VERIFIED`. Nenhum código, Gemfile, migration, requisito, Dev Container, workflow ou script de CI foi alterado; somente os registros obrigatórios de planejamento foram atualizados.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, detalhar M1-T01 com o template e somente então iniciar M1.
+
+## 2026-07-11 21:32 — M0-T03B
+
+### Objetivo
+
+Verificar documentalmente a execução real do CI no GitHub Actions e concluir M0-T03 sem alterar código ou workflow.
+
+### Estado inicial
+
+Branch `main`, working tree limpa, `HEAD` e `origin/main` em `a1cb0e7`. M0-T03A estava `DONE`, M0-T03B `NOT_STARTED` e M0-T03 `IN_PROGRESS`.
+
+### Evidência remota
+
+- workflow e commit foram publicados manualmente pelo responsável; o Codex não fez commit, push ou merge;
+- run `29173802602`: https://github.com/RSalgado-dev/finance-manager/actions/runs/29173802602;
+- SHA `a1cb0e7554c69ce3ee6dbe03c7bb4f17e6de4950`, evento `push`, branch `main`, runner `ubuntu-24.04`;
+- execução de `2026-07-12T00:29:56Z` a `2026-07-12T00:32:01Z`, conclusão `success`;
+- job `86599229166` e todas as etapas concluíram com sucesso;
+- banco test criado do zero; RSpec 2/0; RuboCop 28/0; Brakeman 8.0.5 sem erros ou warnings; Bundler Audit sem vulnerabilidades; Zeitwerk, Tailwind, assets e boot aprovados;
+- `CI local concluído com sucesso.` foi interpretada corretamente como saída padronizada do `bin/ci` executado remotamente;
+- cleanup `down --volumes --remove-orphans`, protegido por `if: always()`, foi confirmado como `success` pela API de jobs.
+
+### Estado final
+
+M0-T03B e M0-T03 marcadas `DONE`. O milestone M0 permanece `IN_PROGRESS`, pronto para revisão independente e ainda não `VERIFIED`.
+
+### Verificações documentais
+
+- histórico local e identidade SHA/branch comparados com o run remoto;
+- GitHub Actions runs/jobs consultados pela API oficial;
+- `bash scripts/check_spec_requirements.sh`, `git diff --check` e inspeção do working tree executados ao final;
+- nenhuma alteração em aplicação, Gemfile, migrations, Dev Container, workflow ou scripts de CI.
+
+### Handoff
+
+Próxima ação exata: executar uma sessão independente de revisão do milestone M0 antes de iniciar M1.
+
 ## 2026-07-11 21:27 — M0-T03A
 
 ### Objetivo

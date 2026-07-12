@@ -131,3 +131,7 @@ Consulte [docs/development-container.md](docs/development-container.md) para arq
 - `planning/tasks/`: tarefas executáveis e evidências.
 
 O scaffold não inclui empresas, usuários, autenticação, tenancy, caixas, despesas, relatórios ou qualquer outra funcionalidade de domínio.
+
+## Fundação visual
+
+A rota `/` apresenta somente o estado institucional atual do projeto. Os layouts e padrões mínimos de interface estão documentados em [docs/ui-foundation.md](docs/ui-foundation.md). Essa base não representa funcionalidades de negócio prontas nem um design system definitivo.

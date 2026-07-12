@@ -6,8 +6,8 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 
 | Milestone | Objetivo | Dependências | Status |
 |---|---|---|---|
-| M0 | Especificação, Dev Container, scaffold Rails e CI inicial | nenhuma | IN_PROGRESS |
-| M1 | Fundação da aplicação, UI base e padrões sobre o Dev Container existente | M0 | NOT_STARTED |
+| M0 | Especificação, Dev Container, scaffold Rails e CI inicial | nenhuma | VERIFIED |
+| M1 | Fundação da aplicação, UI base e padrões sobre o Dev Container existente | M0 | IN_PROGRESS |
 | M2 | Autenticação, empresas, memberships, convites e tenancy | M1 | NOT_STARTED |
 | M3 | Autorização, painel platform, gestão de usuários e auditoria mínima | M2 | NOT_STARTED |
 | M4 | Caixas e fechamento de caixa | M3 | NOT_STARTED |
@@ -35,9 +35,16 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 - `M0-T02A`: `DONE` — Dev Container construído e validado.
 - `M0-T02B`: `DONE` — scaffold Rails `CompanyFinance` incorporado e validado exclusivamente no container.
 - `M0-T02`: `DONE` — tarefa agregadora concluída.
-- `M0-T03`: `IN_PROGRESS` — agregadora subdividida; `M0-T03A` implementa/valida localmente e `M0-T03B` exige execução remota após commit/push autorizado.
+- `M0-T03`: `DONE` — implementação local e execução remota do CI verificadas.
 - `M0-T03A`: `DONE` — workflow e comando canônico validados localmente, inclusive em Compose isolado.
-- `M0-T03B`: `NOT_STARTED` — depende de `M0-T03A` e de publicação autorizada do workflow.
+- `M0-T03B`: `DONE` — run remoto `29173802602` verde, incluindo cleanup.
+
+M0 foi promovido a `VERIFIED` em 2026-07-12 após revisão independente das especificações, Dev Container isolado, banco vazio, scaffold, testes, lint, segurança, assets, CI local equivalente, evidência remota e cleanup. Nenhuma tarefa de M1 foi iniciada nesta revisão.
+
+## Progresso de M1
+
+- `M1-T01`: `DONE` — layouts, fundação visual, página institucional, testes e documentação concluídos.
+- `M1-T02` a `M1-T05`: `NOT_STARTED`.
 
 ## Regra de passagem
 

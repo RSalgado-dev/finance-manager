@@ -1,0 +1,12 @@
+<% content_for :layout_body do %>
+  <div class="flex min-h-screen flex-col">
+    <%= render "layouts/navigation", context_label: "Plataforma" %>
+
+    <main id="main-content" class="page-container flex-1 py-6 sm:py-10">
+      <%= render "shared/flash_messages" %>
+      <%= yield %>
+    </main>
+  </div>
+<% end %>
+
+<%= render template: "layouts/application" %>

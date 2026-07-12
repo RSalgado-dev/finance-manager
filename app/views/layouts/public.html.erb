@@ -1,0 +1,18 @@
+<% content_for :layout_body do %>
+  <div class="flex min-h-screen flex-col">
+    <%= render "layouts/navigation" %>
+
+    <main id="main-content" class="page-container flex-1 py-8 sm:py-12">
+      <%= render "shared/flash_messages" %>
+      <%= yield %>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-6 text-sm text-slate-600">
+      <div class="page-container">
+        Finance Manager — fundação da aplicação em desenvolvimento.
+      </div>
+    </footer>
+  </div>
+<% end %>
+
+<%= render template: "layouts/application" %>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
   <head>
-    <title><%= content_for(:title) || "Company Finance" %></title>
+    <title><%= page_title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Company Finance">
+    <meta name="application-name" content="Finance Manager">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -23,9 +23,13 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
-    </main>
+  <body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
+    <% if content_for?(:layout_body) %>
+      <%= yield :layout_body %>
+    <% else %>
+      <main id="main-content" class="page-container py-8 sm:py-12">
+        <%= yield %>
+      </main>
+    <% end %>
   </body>
 </html>

@@ -1,60 +1,61 @@
 # Estado atual
 
-Atualizado em: `2026-07-11 21:27 America/Sao_Paulo`
+Atualizado em: `2026-07-12 09:15 America/Sao_Paulo`
 
 ## Estado do repositório
 
-- Milestone `M0`: `IN_PROGRESS`; não promover antes da execução remota do CI.
-- Última tarefa: `M0-T03A` — `DONE`.
-- `M0-T03B`: `NOT_STARTED`; depende de commit/push autorizados e run real.
-- Agregadora `M0-T03`: `IN_PROGRESS`.
-- `M0-T01`, `M0-T02A`, `M0-T02B` e `M0-T02`: `DONE`.
-- Branch: `main`.
-- Último commit: `3230b5a Add custom 500 error page, application icon, and robots.txt`.
-- Working tree inicial: limpa; atual: alterações de M0-T03A não commitadas.
+- Milestone `M0`: `VERIFIED`.
+- Milestone `M1`: `IN_PROGRESS`.
+- Última tarefa: `M1-T01 — Layouts e design system mínimo`, `DONE`.
+- `M1-T02` a `M1-T05`: `NOT_STARTED`.
+- Branch: `main`; `HEAD` e `origin/main` locais em `a1cb0e7554c69ce3ee6dbe03c7bb4f17e6de4950`.
+- Working tree inicial: cinco arquivos de planejamento modificados pela revisão de M0; estado final preserva essas mudanças e acrescenta os arquivos de M1-T01, todos não commitados.
 
-## Resultado de M0-T03A
+## Resultado de M1-T01
 
-O CI local foi implementado com `.github/workflows/ci.yml` e `bin/ci`. GitHub Actions usa `ubuntu-24.04` apenas como host Docker; aplicação e PostgreSQL usam os serviços `app` e `db` de `.devcontainer/compose.yaml`. Nenhuma ferramenta Ruby ou banco é instalado no runner.
+- layouts: `application`, `public`, `platform`, `tenant` e `print`, compostos sobre um único documento HTML e sem autenticação/tenant;
+- página institucional: `HomeController#index` em `/`, layout público, português e conteúdo estritamente correspondente ao estado atual;
+- navegação: somente marca, início e indicação de desenvolvimento fora de produção;
+- elementos: cabeçalho, flash semântico/sanitizado, variantes de botão, card, badge textual, estado vazio, tabela responsiva e erros Active Model;
+- estilos: largura, espaçamento, superfícies, tipografia, foco, formulários, feedback, estados disabled/hover, redução de movimento e impressão;
+- documentação: `docs/ui-foundation.md` e referência no README;
+- testes: request da raiz/healthcheck, helpers, partials, cinco layouts e Chromium para navegação e 360/768/1280 px;
+- limites confirmados: nenhuma gem, model, migration, autenticação, tenancy, autorização, domínio, rota futura ou implementação de M1-T02+.
 
-O workflow possui push em `main`, pull request e `workflow_dispatch`, `contents: read`, concorrência com cancelamento, timeout de 30 minutos e cleanup `always()`. A única action é `actions/checkout` v7.0.0, SHA `9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0`, confirmada como release oficial não prerelease.
+## Verificações executadas
 
-`LOCAL_UID`/`LOCAL_GID` são obtidos do runner e enviados ao build. O container permanece não root e o volume de gems/workspace fica gravável. `ripgrep` foi a única dependência sistêmica acrescentada.
+- baseline: 2 exemplos/0 falhas; Tailwind 4.3.2 aprovado;
+- RSpec final: 23 exemplos/0 falhas;
+- RuboCop final: 34 arquivos/0 offenses;
+- Brakeman 8.0.5: 0 erros/0 security warnings;
+- Bundler Audit: advisory DB com 1.200 advisories/0 vulnerabilidades;
+- Zeitwerk: aprovado;
+- Tailwind 4.3.2 e assets precompile: aprovados;
+- `bin/ci`: sucesso integral após a última alteração de código;
+- requisições reais: `/` e `/up` retornaram HTTP 200 dentro do container;
+- specs normativas: 15 arquivos/496 requisitos/zero falhas estruturais;
+- `git diff --check`: aprovado.
 
-## Evidências executadas
+## Problemas encontrados e resolvidos
 
-- baseline: `CompanyFinance::Application` iniciou; o verificador inicialmente falhou em `app` por ausência de `rg`;
-- build local após ajuste: sucesso em aproximadamente 74 s; ripgrep 13.0.0;
-- `bin/ci` no ambiente existente: sucesso;
-- workflow: parser YAML dentro de `app` e invariantes de triggers, permissões, runner, timeout, SHA e cleanup passaram; `actionlint` não estava disponível;
-- simulação isolada `company_finance_ci_validation`: build `--no-cache` em aproximadamente 85 s, banco/volume de gems novos e banco test inicialmente ausente;
-- permissão: usuário `vscode` 1000:1000 escreveu no workspace;
-- `bin/ci` isolado: instalou 126 gems, criou `company_finance_test` e passou em aproximadamente 70 s;
-- verificações: 496 requisitos válidos; 2 specs/0 falhas; 28 arquivos RuboCop/0 offenses; Brakeman/0 warnings; Bundler Audit/0 vulnerabilidades; Zeitwerk, Tailwind, assets e boot verdes;
-- teste negativo: host PostgreSQL inválido interrompeu `db:prepare` e retornou exit code 1;
-- cleanup: containers, rede e volumes isolados removidos; `finance-manager-dev` permaneceu com app ativo e db healthy;
-- nenhuma funcionalidade de domínio, deploy, cache remoto, registry ou publicação de imagem foi adicionada.
+- quatro falhas iniciais em specs dos componentes por expectativas, chamada de helper e tradução; corrigidas sem ampliar escopo;
+- teste responsivo inicialmente detectou CSS precompilado anterior em 360 px; `assets:precompile` atualizou o manifest e a validação passou em 360, 768 e 1280 px.
 
-## Arquivos alterados
+## Arquivos relevantes
 
-- `.github/workflows/ci.yml`
-- `bin/ci`
-- `.devcontainer/Dockerfile`
-- `README.md`
-- `docs/development-container.md`
-- `planning/tasks/M0-specification-and-scaffold.md`
-- `planning/ROADMAP.md`
-- `planning/TRACEABILITY.md`
-- `planning/SESSION_LOG.md`
-- `planning/CURRENT.md`
+- `app/views/layouts/` e `app/views/shared/`;
+- `app/views/home/index.html.erb`, `app/controllers/home_controller.rb`, `config/routes.rb`;
+- `app/helpers/application_helper.rb`, `app/assets/tailwind/application.css`, `config/locales/pt-BR.yml`;
+- `spec/requests/home_spec.rb`, `spec/helpers/`, `spec/views/`, `spec/system/home_spec.rb`;
+- `docs/ui-foundation.md`, README e arquivos de planejamento.
 
-## Limitações reais
+## Limitações
 
-- GitHub Actions não foi executado: workflow não foi commitado nem enviado ao remoto.
-- `actionlint` não está instalado; validação local usou parser YAML no container e checagens estruturais, sem alegar equivalência a um run remoto.
-- não há cache remoto; o build limpo medido em cerca de 85 segundos pode orientar otimização futura.
-- alterações não commitadas; não houve autorização para commit ou push.
+- os layouts `platform` e `tenant` são somente estruturas sem rotas ou contexto, conforme escopo;
+- a confirmação funcional de ações destrutivas pertence às tarefas que criarem essas ações;
+- a fundação não é um design system definitivo e deve crescer apenas por uso concreto;
+- alterações permanecem não commitadas; nenhum commit, push ou merge foi autorizado.
 
 ## Próxima ação exata
 
-Após autorização explícita, criar commit com M0-T03A, fazer push, disparar ou observar o workflow por push/pull request/`workflow_dispatch`, confirmar todos os steps verdes e o cleanup nos logs, e registrar a URL ou ID do run em M0-T03B. Manter M0-T03 `IN_PROGRESS` e não iniciar M1 até essa evidência remota existir.
+Em nova sessão, detalhar `M1-T02 — CurrentAttributes e contexto de request` usando `planning/templates/TASK_TEMPLATE.md` antes de qualquer implementação. Não iniciar M1-T03 ou tarefa posterior.
