@@ -1,6 +1,6 @@
 # Finance Manager
 
-Aplicação web multi-tenant para gestão financeira operacional de empresas. O projeto é dirigido pelas especificações versionadas em `specs/`; o scaffold Rails está configurado, mas nenhuma funcionalidade de negócio foi implementada.
+Aplicação web multi-tenant para gestão financeira operacional de empresas. O projeto é dirigido pelas especificações versionadas em `specs/`; a persistência estrutural de `Company` existe, mas ainda não há fluxo funcional de gestão financeira ou identidade.
 
 ## Stack
 
@@ -121,6 +121,8 @@ Desenvolvimento e teste usam bancos separados e acessam PostgreSQL pelo hostname
 
 Active Storage está carregado, mas suas tabelas ainda não foram instaladas: comprovantes pertencem ao milestone de despesas. Solid Queue e seus schemas de infraestrutura estão disponíveis, sem jobs de negócio ou worker de produção.
 
+A primeira entidade de domínio é `Company`, raiz global do isolamento lógico. Seus campos, defaults, normalizações, constraints e limites estão documentados em [docs/company-model.md](docs/company-model.md); ainda não há gestão de empresas, autenticação ou resolução de tenant.
+
 Consulte [docs/development-container.md](docs/development-container.md) para arquitetura, conexão PostgreSQL, permissões e diagnóstico.
 
 ## Especificações e planejamento
@@ -130,7 +132,7 @@ Consulte [docs/development-container.md](docs/development-container.md) para arq
 - `planning/CURRENT.md`: estado operacional e próxima ação;
 - `planning/tasks/`: tarefas executáveis e evidências.
 
-O scaffold não inclui empresas, usuários, autenticação, tenancy, caixas, despesas, relatórios ou qualquer outra funcionalidade de domínio.
+Além da persistência estrutural de `Company`, a aplicação ainda não inclui usuários, autenticação, resolução de tenant, caixas, despesas, relatórios ou outros fluxos de domínio.
 
 ## Fundação visual
 

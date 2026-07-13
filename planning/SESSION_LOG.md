@@ -2,6 +2,72 @@
 
 Acrescente novas sessões no topo. Não reescreva entradas antigas, salvo correção factual explícita.
 
+## 2026-07-12 22:52 — M2-T01 Company e constraints
+
+### Objetivo
+
+Detalhar e entregar a primeira migration de domínio e `Company` como raiz global do isolamento, sem iniciar autenticação, usuários, memberships, convites ou resolução de tenant.
+
+### Estado inicial
+
+Branch `main`, commit `5f91ce4`, working tree limpa. M0/M1 `VERIFIED`; M2 e M2-T01..T08 `NOT_STARTED`; Compose com `app` ativo e `db` healthy. Nenhum model, migration, schema principal ou factory de domínio.
+
+### Trabalho realizado
+
+- M2-T01 detalhada pelo template e M2/M2-T01 marcados `IN_PROGRESS` antes da migration;
+- migration `20260713013500_create_companies` criada com UUID, campos/defaults normativos, índice funcional e cinco checks nomeados;
+- `Company` implementada com normalizações conservadoras e validações de slug, TZInfo/IANA, BRL, tolerância e boolean;
+- factory mínima e 28 specs de model/integridade PostgreSQL adicionados;
+- banco test recriado, migration revertida/reaplicada e schema Ruby revisado;
+- `docs/company-model.md` e referência curta no README adicionados;
+- rastreabilidade/planejamento atualizados; M2-T01 marcada `DONE`, M2 mantido `IN_PROGRESS` e M2-T02 `NOT_STARTED`.
+
+### Decisões e limites
+
+- Company é raiz global e não possui `company_id`;
+- UUID usa `gen_random_uuid()` já disponível, sem extensão nova;
+- slug é explícito, lowercase, validado no model/check e único por índice `lower(slug)`;
+- documento apenas remove espaços externos, sem validação/pontuação destrutiva de CNPJ;
+- timezone usa identificador IANA; moeda inicial é somente BRL; tolerância é bigint não negativo;
+- consistência operacional de `active`/`suspended_at` fica para services futuros, sem callback/operação nesta tarefa;
+- nenhuma gem, rota, controller, policy, service, associação futura, usuário ou `Current.company` foi adicionado.
+
+### Falha corrigida
+
+A primeira rodada focada terminou 28/1: a spec chamou o predicate inexistente `unique?` em `IndexDefinition`. A API real expõe `unique`; a inspeção retornou `[true, "lower((slug)::text)"]`. Somente a expectativa foi corrigida e a repetição passou 28/0.
+
+A revisão documental final encontrou duas frases antigas no README afirmando ausência total de empresa/domínio. Elas foram ajustadas para reconhecer somente a persistência estrutural de Company, sem prometer fluxos ainda inexistentes.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| baseline | Current 6/0; zero migrations development/test |
+| UUID PostgreSQL | `gen_random_uuid()` aprovado em development/test, sem extensão nova |
+| migration development/test | aplicada com sucesso |
+| banco test limpo/rollback | drop/create, rollback, ausência da tabela, reaplicação e status `up` aprovados |
+| specs focados finais | 28 exemplos, 0 falhas |
+| RSpec completo | 78 exemplos, 0 falhas |
+| RSpec aleatório | 78 exemplos, 0 falhas; seed `39929` |
+| RuboCop | 49 arquivos, 0 offenses |
+| Brakeman 8.0.5 | 0 erros, 0 security warnings |
+| Bundler Audit | 1.200 advisories, 0 vulnerabilidades |
+| Zeitwerk | aprovado |
+| Tailwind/assets | Tailwind 4.3.2 e precompile aprovados |
+| runner UUID/defaults | UUID string e quatro defaults confirmados; registro removido |
+| rotas/gems/escopo | sem diff de gems, rota Company ou artefato de M2-T02+ |
+| `bin/ci` | sucesso integral; 78/0 |
+| verificador normativo | 15 specs, 496 requisitos, zero falhas estruturais |
+| `git diff --check` | aprovado após os registros finais |
+
+### Estado final
+
+M2 `IN_PROGRESS`; M2-T01 `DONE`; M2-T02..T08 `NOT_STARTED`. Repositório executável, sem commit/push/merge/reset ou limpeza destrutiva.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, executar o protocolo inicial e detalhar `M2-T02 — User e autenticação` antes de qualquer implementação.
+
 ## 2026-07-12 22:25 — Verificação independente de M1
 
 ### Objetivo

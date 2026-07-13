@@ -8,7 +8,7 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 |---|---|---|---|
 | M0 | Especificação, Dev Container, scaffold Rails e CI inicial | nenhuma | VERIFIED |
 | M1 | Fundação da aplicação, UI base e padrões sobre o Dev Container existente | M0 | VERIFIED |
-| M2 | Autenticação, empresas, memberships, convites e tenancy | M1 | NOT_STARTED |
+| M2 | Autenticação, empresas, memberships, convites e tenancy | M1 | IN_PROGRESS |
 | M3 | Autorização, painel platform, gestão de usuários e auditoria mínima | M2 | NOT_STARTED |
 | M4 | Caixas e fechamento de caixa | M3 | NOT_STARTED |
 | M5 | Despesas, categorias, fornecedores e anexos | M3 | NOT_STARTED |
@@ -50,6 +50,13 @@ M0 foi promovido a `VERIFIED` em 2026-07-12 após revisão independente das espe
 - `M1-T05`: `DONE / SUPERSEDED_BY_M0-T02A` — nenhuma implementação nova; Dev Container entregue em M0-T02A, integrado em M0-T02B e revalidado na revisão de M0.
 
 M1 foi promovido a `VERIFIED` em 2026-07-12 após revisão independente de código, views, integração, rotas, dependências, responsividade, acessibilidade estrutural, contexto de request, paginação/filtros, testes em ordem normal e aleatória, qualidade, segurança, assets, requisições reais e CI canônico. Nenhuma funcionalidade de M2 foi iniciada.
+
+## Progresso de M2
+
+- `M2-T01`: `DONE` — Company com UUID, defaults, normalizações, constraints PostgreSQL, factory, testes de model/banco, migration reversível e documentação concluída.
+- `M2-T02` a `M2-T08`: `NOT_STARTED`.
+
+M2 permanece `IN_PROGRESS`. M2-T01 está concluída; não há autenticação, usuários, memberships, convites ou resolução de tenant. M2-T02 é a próxima tarefa e não foi iniciada.
 
 ## Regra de passagem
 

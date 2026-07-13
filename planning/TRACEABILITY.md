@@ -5,9 +5,9 @@ Atualizar conforme a implementação avançar.
 | Requisito | Tarefa | Código | Teste | Estado |
 |---|---|---|---|---|
 | PRD-004 | M2-T07, M8-T01 | — | — | SPECIFIED |
-| TEN-001 | M0-T01, M2-T01 | — | — | SPECIFIED |
+| TEN-001 | M0-T01, M2-T01 | `companies`, `Company` | migration/model specs; banco compartilhado e raiz global confirmados | TESTED |
 | TEN-004 | M2-T04 | — | — | SPECIFIED |
-| TEN-014..TEN-018 | M2-T01, M2-T07, M4-T02, M5-T03, M8-T01 | — | — | SPECIFIED |
+| TEN-014..TEN-018 | M2-T07, M4-T02, M5-T03, M8-T01 | — | Company é raiz global e não exige FK composta; implementação inicia nos pais/filhos tenant-scoped | SPECIFIED |
 | INV-001..INV-010 | M2-T06, M2-T08 | — | — | SPECIFIED |
 | AUTHZ-000..AUTHZ-066 | M3-T01, M3-T07 | — | — | SPECIFIED |
 | ARCH-DATA-009..ARCH-DATA-014 | M2-T01, M4-T02, M5-T03 | — | — | SPECIFIED |
@@ -21,6 +21,10 @@ Atualizar conforme a implementação avançar.
 | REP-027..REP-029 | M6-T02..M6-T04, M6-T09 | — | — | SPECIFIED |
 | REP-REPORT-004..REP-REPORT-006 | M6-T05, M6-T09 | — | — | SPECIFIED |
 | AUD-001..AUD-018 | M2-T08, M3-T08, M4-T04..M4-T07, M5-T03..M5-T04, M7-T01..M7-T03 | — | — | SPECIFIED |
+| DATA-COMPANY-001, USR-002, USR-005 | M2-T01 | `app/models/company.rb`, migration/schema, `docs/company-model.md` | model/constraint specs 28/0; UUID/defaults/slug/timezone/moeda/tolerância | TESTED |
+| DATA-COMPANY-002 | M2-T01 e services futuros de suspensão | colunas `active`/`suspended_at`; contrato em `docs/company-model.md` | estrutura testada; operação/coerência transacional deliberadamente futura | SPECIFIED |
+| ARCH-020, ARCH-022, ARCH-024, ARCH-025, ARCH-DATA-002, ARCH-DATA-003, ARCH-DATA-013 | M2-T01 | migration `companies`, `db/schema.rb` | banco test limpo, rollback/reaplicação, runner e constraints diretas | TESTED |
+| TEST-001, TEST-007, TEST-EVID-001 | M2-T01 | `spec/models/company*_spec.rb`, tarefa e histórico | 28 specs focados; suíte 78/0 normal e aleatória (seed 39929) | TESTED |
 | TEST-REQ-001 | M0-T01 | `scripts/check_spec_requirements.sh` | próprio script; revisão independente 15 specs/496 requisitos/zero falhas | VERIFIED |
 | SEC-018 | M8-T05 | — | — | SPECIFIED |
 | OPS-LOCAL-001, OPS-LOCAL-003..OPS-LOCAL-008 | M0-T02A | `.devcontainer/`, `.dockerignore`, `.env.example`, `README.md` | implementação/testes em M0-T02A; revisão independente revalidou build, Compose, runtime não root, hostname `db`, volumes, healthcheck e cleanup; M1-T05 superseded, sem segunda implementação | VERIFIED |
