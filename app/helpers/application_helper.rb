@@ -57,4 +57,27 @@ module ApplicationHelper
       "Não foi possível salvar: #{count} erros encontrados."
     end
   end
+
+  def filter_form_with(url:, clear_url:, **options, &block)
+    html_options = options.fetch(:html, {}).merge(role: "search")
+    form_options = options.merge(
+      url: url,
+      scope: :filter,
+      method: :get,
+      class: class_names("filter-form", options[:class]),
+      html: html_options
+    )
+    form_options.delete(:role)
+
+    form_with(**form_options) do |form|
+      actions = tag.div(class: "filter-form__actions no-print") do
+        safe_join([
+          form.submit("Filtrar", class: button_classes(variant: :primary)),
+          link_to("Limpar filtros", clear_url, class: button_classes(variant: :neutral))
+        ])
+      end
+
+      safe_join([ capture(form, &block), actions ])
+    end
+  end
 end

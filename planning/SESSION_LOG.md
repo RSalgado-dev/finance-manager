@@ -2,6 +2,222 @@
 
 Acrescente novas sessões no topo. Não reescreva entradas antigas, salvo correção factual explícita.
 
+## 2026-07-12 22:11 — Reconciliação de M1-T05
+
+### Objetivo
+
+Determinar se M1-T05 ainda possuía trabalho válido ou duplicava a infraestrutura de desenvolvimento entregue por M0-T02A, sem alterar Docker ou iniciar M2.
+
+### Estado inicial
+
+Branch `main`, commit base `8657cdd`, com alterações não commitadas acumuladas de M1 preservadas. M0 `VERIFIED`; M1 `IN_PROGRESS`; M1-T01..T04 `DONE`; M1-T05 `NOT_STARTED`. Compose normal com `app` ativo e `db` healthy.
+
+### Análise e decisão
+
+- a definição residual de M1-T05 era adaptar comandos/serviços do Dev Container de M0-T02A à aplicação inicializada;
+- M0-T02A já entregou Dockerfile, Compose, runtime não root, PostgreSQL, volumes, healthcheck e pós-criação;
+- M0-T02B já integrou o scaffold ao mesmo ambiente e reconstruiu/validou a imagem;
+- a revisão independente de M0 revalidou Compose isolado, build, runtime, banco, CI e cleanup antes de promover M0;
+- portanto M1-T05 foi encerrada como `DONE / SUPERSEDED_BY_M0-T02A`, sem nova implementação;
+- o worker citado por `OPS-LOCAL-002` permanece `SPECIFIED` para uma tarefa futura ligada a workload assíncrono concreto; não foi transformado em novo escopo de M1-T05;
+- revisão documental preliminar confirmou M1-T01..T04 como `DONE`, sem substituir revisão técnica independente.
+
+### Arquivos alterados
+
+- `planning/tasks/M1-foundation.md`;
+- `planning/ROADMAP.md`;
+- `planning/TRACEABILITY.md`;
+- `planning/SESSION_LOG.md`;
+- `planning/CURRENT.md`.
+
+Nenhum arquivo da aplicação, Gemfile/lock, migration, especificação normativa, Dockerfile, Compose, Dev Container, workflow ou tarefa de M2 foi alterado.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| protocolo Git | branch `main`, commit base `8657cdd`, working tree anterior preservado |
+| Compose `ps` | `app` ativo; `db` healthy |
+| inventário Docker | somente `.devcontainer/Dockerfile` e `.devcontainer/compose.yaml` até profundidade 3 |
+| evidência M0-T02A/M0 | implementação, integração e revisão independente localizadas e cruzadas |
+| cobertura M1 | T01..T04 documentalmente `DONE`; T05 superseded |
+| M2 | nenhum status `IN_PROGRESS`/`DONE`; milestone permanece `NOT_STARTED` |
+| verificador normativo | 15 specs/496 requisitos; zero duplicidades, referências ausentes, linhas sem ID ou links quebrados |
+| Compose `config` | válido; serviços canônicos `app`/`db`, volumes e healthcheck preservados |
+| Compose `ps` final | `app` ativo; `db` healthy |
+| hashes protegidos | Dockerfile, Compose, devcontainer.json, post-create, Gemfile e lockfile inalterados durante a sessão |
+| migrations | nenhum arquivo novo |
+| `git diff --check` | aprovado |
+
+### Estado final
+
+M0 permanece `VERIFIED`. M1 está `DONE` e `READY_FOR_REVIEW`, ainda não `VERIFIED`. M1-T05 não representa nova implementação. M2 permanece `NOT_STARTED`.
+
+### Handoff
+
+Próxima ação exata: executar uma revisão independente do milestone M1 antes de iniciar M2.
+
+## 2026-07-12 22:00 — M1-T04
+
+### Objetivo
+
+Detalhar e entregar infraestrutura mínima de paginação server-side e filtros `GET`, sem antecipar models, migrations ou filtros financeiros.
+
+### Estado inicial
+
+Branch `main`, commit base `8657cdd`, com alterações não commitadas de M1-T02/M1-T03 preservadas. M0 `VERIFIED`, M1 `IN_PROGRESS`, M1-T01..T03 `DONE` e M1-T04 `NOT_STARTED`. Pagy/concorrentes, models/migrations de domínio e filtros reais estavam ausentes.
+
+### Trabalho realizado
+
+- M1-T04 detalhada e marcada `IN_PROGRESS` antes do Gemfile;
+- Pagy `~> 43.6` instalado como 43.6.0 e documentação/código empacotados inspecionados;
+- `Pagy::Method` integrado explicitamente, com `Pagy::OPTIONS`, limite fixo 25 e Rails I18n pt-BR;
+- links recebem apenas parâmetros permitidos; `limit` do cliente fica desabilitado e não há cópia indiscriminada da request;
+- partial acessível/responsivo e `filter_form_with` GET criados, sem JavaScript ou conhecimento de domínio;
+- rota/controller/coleção estática existem somente em teste;
+- specs helper/view/request/system cobrem páginas, metadados, inválidos, allowlist, filtros aninhados, teclado/foco, Turbo e 360 px;
+- `docs/pagination-and-filters.md` e referência curta no README criados;
+- nenhum model, migration, query/filter real, tenant, policy, autenticação ou tarefa posterior foi implementado.
+
+### Decisões
+
+- offset é o padrão inicial; keyset/countish/countless/cursor/infinite scroll permanecem adiados;
+- `limit` do cliente não foi habilitado porque `max_limit` da versão não normaliza negativos antes da validação; limite permanece fixo em 25 e eventual teto será 100;
+- página malformada/não positiva usa a normalização oficial para 1; página acima da última retorna vazio controlado;
+- query string é preservada somente a partir de `ActionController::Parameters` permitidos por controller;
+- ordem futura: tenant → autorização → filtros → ordenação estável → paginação → apresentação.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| Pagy | 43.6.0; API/arquivos empacotados inspecionados |
+| RSpec | 50 exemplos, 0 falhas |
+| system spec após assets | Chromium 4 exemplos, 0 falhas |
+| RuboCop | 44 arquivos, 0 offenses |
+| Brakeman 8.0.5 | 0 erros, 0 security warnings |
+| Bundler Audit | 1.200 advisories, 0 vulnerabilidades |
+| Zeitwerk | aprovado |
+| Tailwind/assets | Tailwind 4.3.2 e precompile aprovados |
+| `bin/ci` | sucesso integral |
+| rotas de produção | zero rotas `__test__` |
+| APIs/gems inseguras | nenhuma API Pagy legada, concorrente, `params.to_unsafe_h`, `unscoped` ou interpolação SQL |
+| migrations/models de domínio | nenhum arquivo criado |
+| specs normativas | 15 specs, 496 requisitos, zero falhas estruturais |
+| `git diff --check` | aprovado |
+
+### Estado final
+
+M1 permanece `IN_PROGRESS`; M1-T04 está `DONE`; M1-T05 permanece `NOT_STARTED`. Alterações anteriores foram preservadas. Nenhum commit, push, merge ou operação destrutiva foi realizado.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, detalhar M1-T05 pelo template antes de qualquer implementação.
+
+## 2026-07-12 09:42 — M1-T03
+
+### Objetivo
+
+Definir convenções mínimas de services, queries e policies sem implementar domínio ou abstrações genéricas.
+
+### Estado inicial
+
+Branch `main`, commit base `8657cdd`, com alterações não commitadas de M1-T02 preservadas. M0 `VERIFIED`, M1 `IN_PROGRESS`, M1-T01/M1-T02 `DONE`, M1-T03/M1-T04 `NOT_STARTED`. Pundit, services, queries, policies, models e migrations de domínio ausentes; baseline 32 specs/0 falhas.
+
+### Trabalho realizado
+
+- M1-T03 detalhada e marcada `IN_PROGRESS` antes de qualquer estrutura;
+- seis diretórios canônicos criados somente com `.keep`;
+- runner confirmou autoload automático de `app/services`, `app/queries` e `app/policies`;
+- `docs/code-organization.md` criado com responsabilidades, contratos, nomes, transações, tenant, auditoria, jobs, erros, testes, anti-patterns e decisões adiadas;
+- `AGENTS.md` recebeu quatro regras permanentes concisas;
+- README passou a referenciar o documento;
+- nenhuma classe Ruby, gem, policy, service/query de domínio, model, migration ou funcionalidade de M1-T04 foi criada.
+
+### Decisões
+
+- services futuros são classes simples com dependências explícitas; não há base genérica ou Result object;
+- queries recebem relation autorizada e tenant-scoped; não começam por `.all` nem por `Current.company`;
+- policies futuras dependem da instalação de Pundit no milestone de autorização;
+- policy autoriza, service valida/coordena e constraints garantem integridade;
+- erros específicos serão criados próximos aos casos concretos, sem `ApplicationError` vazio;
+- transação pertence à operação e inclui auditoria crítica quando exigida.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| autoload dirs | services/queries/policies reconhecidos automaticamente |
+| Zeitwerk | aprovado |
+| RSpec | 32 exemplos, 0 falhas |
+| RuboCop | 39 arquivos, 0 offenses |
+| Brakeman 8.0.5 | 0 erros, 0 security warnings |
+| Bundler Audit | 1.200 advisories, 0 vulnerabilidades |
+| Tailwind/assets | Tailwind 4.3.2 e precompile aprovados |
+| `bin/ci` | sucesso integral |
+| busca de abstrações | nenhuma ocorrência em `*.rb` |
+| gems/migrations | nenhum diff de dependências; nenhuma migration |
+| specs normativas | 15 specs, 496 requisitos, zero falhas estruturais |
+| `git diff --check` | aprovado |
+
+### Estado final
+
+M1 permanece `IN_PROGRESS`; M1-T03 está `DONE`; M1-T04/M1-T05 permanecem `NOT_STARTED`. Alterações de M1-T02 foram preservadas. Nenhum commit ou push foi realizado.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, detalhar M1-T04 pelo template antes de qualquer implementação.
+
+## 2026-07-12 09:28 — M1-T02
+
+### Objetivo
+
+Detalhar e executar `CurrentAttributes` e o contexto mínimo de request sem implementar autenticação, tenant ou models de domínio.
+
+### Estado inicial
+
+Branch `main`, commit `8657cdd`, working tree limpa; M0 `VERIFIED`, M1 `IN_PROGRESS`, M1-T01 `DONE` e M1-T02/M1-T03 `NOT_STARTED`. Compose com `app` ativo e `db` healthy; 4 request specs/0 falhas no baseline.
+
+### Trabalho realizado
+
+- M1-T02 detalhada e marcada `IN_PROGRESS` antes do código;
+- `Current < ActiveSupport::CurrentAttributes` criado com `user`, `company`, `membership`, `request_id`, `ip_address` e `user_agent`;
+- `RequestContext` criado com `around_action`, `Current.set`, `request.remote_ip` e reset explícito antes/depois via `ensure`;
+- `ApplicationController` integrado sem autenticação ou tenant resolution;
+- controller e rotas auxiliares limitados a teste, sem retornar metadados;
+- specs unitárias/request cobrem reset, bloco, exceção, threads, requests sequenciais e cleanup;
+- ciclo de vida, privacidade, proxies, logging e contratos futuros documentados;
+- nenhuma gem, migration, model de domínio, job ou endpoint produtivo adicionado.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| RSpec | 32 exemplos, 0 falhas |
+| RuboCop | 39 arquivos, 0 offenses |
+| Brakeman 8.0.5 | 0 erros, 0 security warnings |
+| Bundler Audit | 1.200 advisories, 0 vulnerabilidades |
+| Zeitwerk | aprovado |
+| Tailwind/assets | Tailwind 4.3.2 e precompile aprovados |
+| runners | herança de `Current` e log tag `:request_id` aprovadas |
+| `bin/ci` | sucesso integral |
+| rotas de produção | `__test__/request_context` ausente |
+| gems/migrations | nenhum diff no Gemfile/lock; `db/migrate` vazio |
+| specs normativas | 15 specs, 496 requisitos, zero falhas estruturais |
+| `git diff --check` | aprovado |
+
+### Falha corrigida
+
+A primeira expectativa assumia que `Current.attributes` listaria atributos nulos; Rails 8 retorna `{}` antes de atribuição. A spec passou a testar os seis leitores diretamente e terminou verde.
+
+### Estado final
+
+M1 permanece `IN_PROGRESS`; M1-T02 está `DONE`; M1-T03 a M1-T05 permanecem `NOT_STARTED`. Nenhum commit ou push foi realizado.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, detalhar M1-T03 pelo template antes de qualquer implementação.
+
 ## 2026-07-12 09:15 — M1-T01
 
 ### Objetivo

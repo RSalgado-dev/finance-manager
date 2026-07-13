@@ -40,4 +40,37 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.form_error_summary(2)).to eq("Não foi possível salvar: 2 erros encontrados.")
     end
   end
+
+  describe "#filter_form_with" do
+    it "renderiza formulário GET aninhado com ações explícitas e sem página" do
+      html = helper.filter_form_with(url: "/items", clear_url: "/items") do |form|
+        helper.safe_join([
+          form.label(:query, "Busca"),
+          form.search_field(:query)
+        ])
+      end
+      document = Capybara.string(html)
+
+      expect(document).to have_css("form[action='/items'][method='get'][role='search']")
+      expect(document).to have_css("label[for='filter_query']", text: "Busca")
+      expect(document).to have_field("filter[query]")
+      expect(document).to have_button("Filtrar")
+      expect(document).to have_link("Limpar filtros", href: "/items")
+      expect(document).to have_no_field("page", type: :hidden)
+    end
+
+    it "preserva classes fornecidas sem permitir troca do método ou escopo" do
+      html = helper.filter_form_with(
+        url: "/items",
+        clear_url: "/items",
+        class: "custom-filter",
+        method: :post,
+        role: "form"
+      ) { |form| form.text_field(:status) }
+      document = Capybara.string(html)
+
+      expect(document).to have_css("form.filter-form.custom-filter[method='get'][role='search']")
+      expect(document).to have_field("filter[status]")
+    end
+  end
 end

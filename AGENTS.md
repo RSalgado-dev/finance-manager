@@ -107,6 +107,13 @@ Para mudanças de comportamento, arquitetura ou escopo:
 - Toda mudança crítica deve produzir auditoria conforme a especificação.
 - Novas dependências de produção exigem justificativa registrada na tarefa.
 
+## Organização das camadas
+
+- Services tenant-scoped devem receber empresa, membership, ator ou recurso escopado explicitamente; `Current` não é service locator.
+- Query objects devem receber uma relation já autorizada e tenant-scoped, sem iniciar implicitamente por `.all` ou por `Current.company`.
+- Policies autorizam; services validam e coordenam a operação; foreign keys e constraints preservam a integridade no banco.
+- Não criar classes base, Result objects, DSLs ou abstrações genéricas sem comportamento compartilhado real, imediato e testável.
+
 ## Testes e verificação
 
 Uma tarefa não está concluída apenas porque o código foi escrito.

@@ -135,3 +135,9 @@ O scaffold não inclui empresas, usuários, autenticação, tenancy, caixas, des
 ## Fundação visual
 
 A rota `/` apresenta somente o estado institucional atual do projeto. Os layouts e padrões mínimos de interface estão documentados em [docs/ui-foundation.md](docs/ui-foundation.md). Essa base não representa funcionalidades de negócio prontas nem um design system definitivo.
+
+O ciclo de vida de `Current` e dos metadados mínimos de request está documentado em [docs/request-context.md](docs/request-context.md). Essa infraestrutura ainda não implementa autenticação nem resolução de empresa.
+
+As convenções mínimas para controllers, models, services, queries e policies futuras estão em [docs/code-organization.md](docs/code-organization.md). O documento registra também as abstrações deliberadamente adiadas.
+
+A infraestrutura server-side de paginação e a convenção para filtros `GET` estão documentadas em [docs/pagination-and-filters.md](docs/pagination-and-filters.md).

@@ -7,7 +7,7 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 | Milestone | Objetivo | Dependências | Status |
 |---|---|---|---|
 | M0 | Especificação, Dev Container, scaffold Rails e CI inicial | nenhuma | VERIFIED |
-| M1 | Fundação da aplicação, UI base e padrões sobre o Dev Container existente | M0 | IN_PROGRESS |
+| M1 | Fundação da aplicação, UI base e padrões sobre o Dev Container existente | M0 | DONE |
 | M2 | Autenticação, empresas, memberships, convites e tenancy | M1 | NOT_STARTED |
 | M3 | Autorização, painel platform, gestão de usuários e auditoria mínima | M2 | NOT_STARTED |
 | M4 | Caixas e fechamento de caixa | M3 | NOT_STARTED |
@@ -22,7 +22,7 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 
 - Dev Container e Docker Compose de desenvolvimento são entregues em `M0-T02A` e são dependência do scaffold `M0-T02B`.
 - CI inicial é entregue em M0 e permanece obrigatório antes dos domínios.
-- M1 utiliza e evolui a configuração de desenvolvimento criada em M0, sem criar uma segunda configuração Docker concorrente; imagem, processos e deploy de produção pertencem a M9.
+- M1 utiliza a configuração de desenvolvimento entregue e verificada em M0, sem segunda configuração Docker; imagem, processos e deploy de produção pertencem a M9.
 - Convites, e-mails de convite e recuperação pertencem a M2.
 - AuditLog e serviço transacional mínimo pertencem a M3; cada domínio M4/M5 implementa seus próprios eventos críticos.
 - CSV e impressão pertencem a M6.
@@ -44,7 +44,12 @@ M0 foi promovido a `VERIFIED` em 2026-07-12 após revisão independente das espe
 ## Progresso de M1
 
 - `M1-T01`: `DONE` — layouts, fundação visual, página institucional, testes e documentação concluídos.
-- `M1-T02` a `M1-T05`: `NOT_STARTED`.
+- `M1-T02`: `DONE` — `Current`, ciclo HTTP, isolamento, testes e documentação concluídos.
+- `M1-T03`: `DONE` — estrutura canônica e convenções arquiteturais documentadas sem abstrações especulativas.
+- `M1-T04`: `DONE` — Pagy 43.6.0, paginação offset acessível, filtros GET seguros, testes e documentação concluídos.
+- `M1-T05`: `DONE / SUPERSEDED_BY_M0-T02A` — nenhuma implementação nova; Dev Container entregue em M0-T02A, integrado em M0-T02B e revalidado na revisão de M0.
+
+M1 está `DONE` e `READY_FOR_REVIEW`, não `VERIFIED`. A próxima sessão deve executar revisão independente do milestone inteiro antes de iniciar M2.
 
 ## Regra de passagem
 

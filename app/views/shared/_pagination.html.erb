@@ -1,0 +1,19 @@
+<% if pagy.present? %>
+  <div class="pagination-container" data-ui="pagination">
+    <p class="pagination-info" aria-live="polite">
+      <% if pagy.count.zero? %>
+        Nenhum registro encontrado.
+      <% elsif pagy.in.zero? %>
+        Nenhum registro nesta página.
+      <% elsif pagy.pages == 1 %>
+        Mostrando <%= pagy.count %> <%= pagy.count == 1 ? "registro" : "registros" %>.
+      <% else %>
+        Mostrando registros <%= pagy.from %>–<%= pagy.to %> de <%= pagy.count %>.
+      <% end %>
+    </p>
+
+    <% if pagy.pages > 1 %>
+      <%== pagy.series_nav(aria_label: "Paginação dos resultados") %>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,10 @@
+pt-BR:
+  pagy:
+    aria_label:
+      nav:
+        one: "Paginação dos resultados"
+        other: "Paginação dos resultados"
+      previous: "Página anterior"
+      next: "Próxima página"
+    previous: "Anterior"
+    next: "Próxima"

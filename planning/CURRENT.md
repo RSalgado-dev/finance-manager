@@ -1,61 +1,88 @@
 # Estado atual
 
-Atualizado em: `2026-07-12 09:15 America/Sao_Paulo`
+Atualizado em: `2026-07-12 22:11 America/Sao_Paulo`
 
 ## Estado do repositório
 
 - Milestone `M0`: `VERIFIED`.
-- Milestone `M1`: `IN_PROGRESS`.
-- Última tarefa: `M1-T01 — Layouts e design system mínimo`, `DONE`.
-- `M1-T02` a `M1-T05`: `NOT_STARTED`.
-- Branch: `main`; `HEAD` e `origin/main` locais em `a1cb0e7554c69ce3ee6dbe03c7bb4f17e6de4950`.
-- Working tree inicial: cinco arquivos de planejamento modificados pela revisão de M0; estado final preserva essas mudanças e acrescenta os arquivos de M1-T01, todos não commitados.
+- Milestone `M1`: `DONE / READY_FOR_REVIEW`, ainda não `VERIFIED`.
+- `M1-T01`, `M1-T02`, `M1-T03` e `M1-T04`: `DONE`.
+- `M1-T05`: `DONE / SUPERSEDED_BY_M0-T02A`; nenhuma implementação nova foi realizada.
+- Milestone `M2`: `NOT_STARTED`; nenhuma tarefa posterior a M1 foi iniciada.
+- Branch: `main`; commit base `8657cdd`.
+- Working tree não commitada de M1 foi preservada integralmente; nenhum arquivo existente foi descartado ou revertido.
 
-## Resultado de M1-T01
+## Conteúdo encontrado em M1-T05
 
-- layouts: `application`, `public`, `platform`, `tenant` e `print`, compostos sobre um único documento HTML e sem autenticação/tenant;
-- página institucional: `HomeController#index` em `/`, layout público, português e conteúdo estritamente correspondente ao estado atual;
-- navegação: somente marca, início e indicação de desenvolvimento fora de produção;
-- elementos: cabeçalho, flash semântico/sanitizado, variantes de botão, card, badge textual, estado vazio, tabela responsiva e erros Active Model;
-- estilos: largura, espaçamento, superfícies, tipografia, foco, formulários, feedback, estados disabled/hover, redução de movimento e impressão;
-- documentação: `docs/ui-foundation.md` e referência no README;
-- testes: request da raiz/healthcheck, helpers, partials, cinco layouts e Chromium para navegação e 360/768/1280 px;
-- limites confirmados: nenhuma gem, model, migration, autenticação, tenancy, autorização, domínio, rota futura ou implementação de M1-T02+.
+A definição residual era “integrar a fundação ao Dev Container existente”, adaptando comandos e serviços do ambiente criado em M0-T02A à aplicação Rails inicializada, sem Dockerfile ou Compose concorrente.
+
+Esse conteúdo não constitui trabalho restante:
+
+- M0-T02A criou e validou o Dev Container canônico;
+- M0-T02B integrou o scaffold Rails ao mesmo ambiente e o revalidou após a incorporação;
+- a revisão independente de M0 repetiu build/Compose isolado, runtime não root, banco vazio, CI e cleanup;
+- M0 foi promovido a `VERIFIED` com essa evidência.
+
+Por isso M1-T05 foi encerrada administrativamente como satisfeita por M0-T02A, sem ser contada como segunda implementação.
+
+## Evidências referenciadas
+
+- `planning/tasks/M0-specification-and-scaffold.md`: M0-T02A, M0-T02B e “Verificação independente do milestone M0”;
+- `planning/SESSION_LOG.md`: sessões de 2026-07-11 20:23, 2026-07-11 21:00 e 2026-07-12 07:54;
+- `.devcontainer/Dockerfile`, `.devcontainer/compose.yaml`, `.devcontainer/devcontainer.json` e `.devcontainer/scripts/post-create.sh`;
+- `docs/development-container.md`, README, `.dockerignore` e `.env.example`.
+
+## Revisão documental preliminar de M1
+
+- M1-T01: layouts, fundação visual, partials, acessibilidade, impressão e responsividade registrados como `DONE`;
+- M1-T02: `Current`, contexto HTTP, isolamento request/thread, reset após exceção e documentação registrados como `DONE`;
+- M1-T03: convenções de services/queries/policies, dependências explícitas, diretórios e ausência de abstrações especulativas registrados como `DONE`;
+- M1-T04: Pagy 43.6.0, offset, filtros GET, parâmetros permitidos, partial acessível, query string segura e zero rotas produtivas de teste registrados como `DONE`;
+- M1-T05: responsabilidade Docker sobreposta e satisfeita por M0.
+
+Esta confirmação é apenas documental. A revisão técnica completa de M1 deve ocorrer em sessão independente, com nova inspeção crítica e execução das verificações aplicáveis antes de qualquer promoção para `VERIFIED`.
+
+## Limitação preservada
+
+`OPS-LOCAL-002` cita web, PostgreSQL e worker. O Compose canônico possui `app` e `db`; a rastreabilidade já registrava “worker futuro” e estado `SPECIFIED`. Sem job de negócio atual, o worker permanece para uma tarefa futura ligada ao primeiro workload assíncrono concreto. Essa pendência não reabre M1-T05 e não autoriza configuração Docker concorrente.
+
+## Arquivos alterados nesta reconciliação
+
+- `planning/tasks/M1-foundation.md`;
+- `planning/ROADMAP.md`;
+- `planning/TRACEABILITY.md`;
+- `planning/SESSION_LOG.md`;
+- `planning/CURRENT.md`.
+
+Nenhum arquivo funcional do Dev Container, código da aplicação, Gemfile/lock, migration, especificação normativa ou planejamento de M2 foi alterado.
 
 ## Verificações executadas
 
-- baseline: 2 exemplos/0 falhas; Tailwind 4.3.2 aprovado;
-- RSpec final: 23 exemplos/0 falhas;
-- RuboCop final: 34 arquivos/0 offenses;
-- Brakeman 8.0.5: 0 erros/0 security warnings;
-- Bundler Audit: advisory DB com 1.200 advisories/0 vulnerabilidades;
-- Zeitwerk: aprovado;
-- Tailwind 4.3.2 e assets precompile: aprovados;
-- `bin/ci`: sucesso integral após a última alteração de código;
-- requisições reais: `/` e `/up` retornaram HTTP 200 dentro do container;
-- specs normativas: 15 arquivos/496 requisitos/zero falhas estruturais;
-- `git diff --check`: aprovado.
+- protocolo Git: branch `main`, commit base `8657cdd`, alterações anteriores preservadas;
+- Compose inicial: `app` ativo e `db` healthy;
+- inventário: somente `.devcontainer/Dockerfile` e `.devcontainer/compose.yaml` até profundidade 3;
+- hashes iniciais registrados para Dockerfile, Compose, devcontainer.json, post-create, Gemfile e lockfile;
+- referências de M0-T02A, M1-T05 e Dev Container revisadas;
+- `docker compose ... config`: válido, com os serviços canônicos `app` e `db`, volumes e healthcheck preservados;
+- `docker compose ... ps`: `app` ativo e `db` healthy;
+- verificador normativo: 15 specs, 496 requisitos e zero falhas estruturais;
+- `git diff --check`: aprovado;
+- hashes finais de Dockerfile, Compose, devcontainer.json, post-create, Gemfile e lockfile iguais aos iniciais;
+- `db/migrate`: nenhum arquivo novo;
+- diff da reconciliação restrito aos cinco arquivos de planejamento listados.
 
-## Problemas encontrados e resolvidos
+## Falhas conhecidas e decisões pendentes
 
-- quatro falhas iniciais em specs dos componentes por expectativas, chamada de helper e tradução; corrigidas sem ampliar escopo;
-- teste responsivo inicialmente detectou CSS precompilado anterior em 360 px; `assets:precompile` atualizou o manifest e a validação passou em 360, 768 e 1280 px.
+- nenhuma falha funcional foi identificada no ambiente normal;
+- worker futuro de `OPS-LOCAL-002` permanece pendente, fora de M1-T05;
+- M1 aguarda revisão independente e não pode ser considerado `VERIFIED` nesta sessão.
 
-## Arquivos relevantes
+## Alterações não commitadas
 
-- `app/views/layouts/` e `app/views/shared/`;
-- `app/views/home/index.html.erb`, `app/controllers/home_controller.rb`, `config/routes.rb`;
-- `app/helpers/application_helper.rb`, `app/assets/tailwind/application.css`, `config/locales/pt-BR.yml`;
-- `spec/requests/home_spec.rb`, `spec/helpers/`, `spec/views/`, `spec/system/home_spec.rb`;
-- `docs/ui-foundation.md`, README e arquivos de planejamento.
-
-## Limitações
-
-- os layouts `platform` e `tenant` são somente estruturas sem rotas ou contexto, conforme escopo;
-- a confirmação funcional de ações destrutivas pertence às tarefas que criarem essas ações;
-- a fundação não é um design system definitivo e deve crescer apenas por uso concreto;
-- alterações permanecem não commitadas; nenhum commit, push ou merge foi autorizado.
+- alterações acumuladas de M1-T02..T04 permanecem como encontradas;
+- esta sessão acrescenta somente a reconciliação nos cinco arquivos de planejamento listados;
+- nenhum commit, push, merge, reset, limpeza ou alteração de histórico foi executado.
 
 ## Próxima ação exata
 
-Em nova sessão, detalhar `M1-T02 — CurrentAttributes e contexto de request` usando `planning/templates/TASK_TEMPLATE.md` antes de qualquer implementação. Não iniciar M1-T03 ou tarefa posterior.
+Executar uma revisão independente do milestone M1 antes de iniciar M2.
