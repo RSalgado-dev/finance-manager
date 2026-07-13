@@ -2,6 +2,62 @@
 
 Acrescente novas sessões no topo. Não reescreva entradas antigas, salvo correção factual explícita.
 
+## 2026-07-12 22:25 — Verificação independente de M1
+
+### Objetivo
+
+Revisar e corrigir somente defeitos necessários ao aceite de M1, decidir sua promoção e não iniciar nenhuma funcionalidade de M2.
+
+### Estado inicial
+
+Branch `main`, commit `921f50d`, working tree limpa. M0 `VERIFIED`; M1 `DONE / READY_FOR_REVIEW`; M1-T01..T04 `DONE`; M1-T05 `DONE / SUPERSEDED_BY_M0-T02A`; M2 `NOT_STARTED`. Compose com `app` ativo e `db` healthy.
+
+### Trabalho realizado
+
+- protocolo inicial, documentos obrigatórios, tarefa M1, dependências herdadas de M0, specs e todos os arquivos de aplicação/teste alterados por M1 relidos integralmente;
+- layouts, componentes, Tailwind, semântica, foco, impressão e responsividade inspecionados e reexecutados em Chromium;
+- `Current`, `RequestContext`, callbacks, privacidade, isolamento por request/thread e integração com paginação revisados;
+- organização de services/queries/policies e ausência de abstrações fictícias confirmadas;
+- Pagy 43.6.0, inicializador, API, limite, páginas inválidas, allowlist, formulário GET e navegação acessível revalidados;
+- rotas, gems, migrations, endpoints produtivos, antecipação de M2 e integração entre as quatro entregas inspecionados;
+- aplicação iniciada de modo controlado para requisições reais e encerrada ao final;
+- M1 promovido a `VERIFIED`; M2 permaneceu `NOT_STARTED`.
+
+### Problemas e correções
+
+Nenhum defeito funcional foi encontrado e nenhuma tarefa precisou ser reaberta. A única divergência factual era `planning/CURRENT.md` ainda registrar o commit-base/working tree anteriores ao commit `921f50d`; o registro foi reescrito com o estado real. Nenhuma especificação, aplicação, teste, dependência, migration, Dev Container ou CI foi alterado.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| baseline focado de M1 | 48 exemplos, 0 falhas |
+| RSpec completo | 50 exemplos, 0 falhas |
+| RSpec aleatório | 50 exemplos, 0 falhas; seed `56916` |
+| system specs Chromium | 7 exemplos, 0 falhas |
+| responsividade/acessibilidade estrutural | 360/768/1280 px, teclado/foco, landmarks, `aria-current`, impressão e ausência de overflow revalidados |
+| RuboCop | 44 arquivos, 0 offenses |
+| Brakeman 8.0.5 | 0 erros, 0 security warnings |
+| Bundler Audit | 1.200 advisories, 0 vulnerabilidades |
+| Zeitwerk/autoload | aprovado; diretórios canônicos automáticos |
+| Tailwind/assets | Tailwind 4.3.2 e precompile aprovados |
+| HTTP real | `/` e `/up` retornaram 200; servidor temporário encerrado |
+| rotas | nenhuma rota própria `__test__`, platform, tenant, autenticação ou domínio fora de teste |
+| Pagy/filtros | 43.6.0, API atual, offset/25, inválidos controlados e allowlist aprovados |
+| Current | seis atributos exatos, reset/ensure, exceção/threads e ausência de dados/logging excessivos aprovados |
+| dependências/migrations/M2 | somente Pagy direto; nenhuma migration/model/funcionalidade de M2 |
+| `bin/ci` | sucesso integral |
+| verificador normativo | 15 specs, 496 requisitos, zero falhas estruturais |
+| `git diff --check` | aprovado após os registros finais |
+
+### Estado final
+
+M0 e M1 `VERIFIED`. M2 `NOT_STARTED`. Alterações restritas aos cinco arquivos obrigatórios de planejamento; nenhum commit, push, merge, reset ou limpeza destrutiva executado.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, executar o protocolo inicial e detalhar `M2-T01 — Company e constraints` antes de qualquer implementação de M2.
+
 ## 2026-07-12 22:11 — Reconciliação de M1-T05
 
 ### Objetivo

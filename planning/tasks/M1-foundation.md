@@ -1,5 +1,7 @@
 # M1 — Fundação
 
+Status: `VERIFIED`
+
 Dependência do milestone: M0 concluído, incluindo Dev Container, scaffold Rails e CI inicial.
 
 ## M1-T01 — Layouts e design system mínimo
@@ -588,3 +590,50 @@ Esta revisão confirma somente o estado e as evidências registradas; não subst
 - `M1-T05 DONE / SUPERSEDED_BY_M0-T02A`: nenhuma nova implementação; responsabilidade satisfeita e verificada em M0.
 
 M1 está `DONE` e `READY_FOR_REVIEW`, mas não `VERIFIED`. A próxima sessão deve reler e inspecionar criticamente todo o milestone, executar novamente as verificações aplicáveis e somente então decidir promoção. M2 permanece `NOT_STARTED`.
+
+---
+
+## Verificação independente do milestone M1
+
+Verificada em 2026-07-12, sem alterar código de aplicação, dependências, migrations, especificações normativas ou qualquer tarefa de M2.
+
+### Critérios de promoção
+
+- [x] `M1-T01`, `M1-T02`, `M1-T03` e `M1-T04` revalidadas independentemente.
+- [x] `M1-T05` confirmada como satisfeita por M0-T02A/M0-T02B, sem segunda infraestrutura.
+- [x] Layouts, componentes, semântica, impressão, foco e responsividade revalidados.
+- [x] `Current` e `RequestContext` revalidados quanto a atributos, privacidade, isolamento, exceção e cleanup.
+- [x] Diretórios arquiteturais contêm somente `.keep`; não há bases ou abstrações especulativas.
+- [x] Pagy 43.6.0 usa API atual, offset e limite fixo 25; filtros propagam somente allowlist.
+- [x] Rotas auxiliares de teste estão ausentes fora do ambiente de teste.
+- [x] Nenhuma funcionalidade, model, migration, gem ou rota de M2 foi antecipada.
+- [x] Suítes completa, aleatória e de sistema passaram.
+- [x] RuboCop, Brakeman, Bundler Audit e Zeitwerk passaram.
+- [x] Tailwind, assets, requisições reais e `bin/ci` passaram.
+- [x] Verificador normativo e `git diff --check` passaram.
+- [x] Não existe bloqueio crítico aberto para M1.
+
+### Evidência da revisão
+
+- baseline: branch `main`, commit `921f50d`, working tree inicialmente limpa; `app` ativo e `db` healthy;
+- inspeção: todos os arquivos de aplicação/teste alterados por M1, Gemfile/lock, rotas, configurações, views, helpers, controllers, concerns e documentação foram relidos criticamente;
+- UI: um documento HTML e um `main`, `lang="pt-BR"`, headings coerentes, feedback textual, foco visível, tabela responsiva, impressão sem navegação e `prefers-reduced-motion`; Chromium cobriu 360/768/1280 px sem overflow indevido;
+- Current: seis atributos exatos; nenhum request/params/session/cookies/headers completos; `request.request_id`, `request.remote_ip` e `request.user_agent`; reset antes e em `ensure`; isolamento por threads e cleanup após resposta/exceção;
+- organização: seis diretórios preservados somente por `.keep`, reconhecidos automaticamente pelo autoloader; buscas Ruby sem abstrações proibidas;
+- Pagy: 43.6.0 (`~> 43.6`), `Pagy::Method`, offset, limite fixo 25, páginas inválidas controladas, partial explícito/acessível, formulário GET `filter[...]` e allowlist sem `params.to_unsafe_h`;
+- rotas: `/` e `/up` são as únicas rotas próprias do estágio; nenhuma rota `__test__`, platform, tenant, autenticação ou domínio em desenvolvimento/produção; rotas internas das engines Rails permanecem as do scaffold aceito em M0;
+- dependências/banco: somente Pagy e sua dependência transitiva `yaml` foram acrescentados por M1; `db/migrate` continua sem arquivos e não há models de domínio;
+- RSpec padrão: 50 exemplos, 0 falhas; aleatório: 50 exemplos, 0 falhas, seed `56916`; system specs: 7 exemplos, 0 falhas;
+- qualidade: RuboCop 44 arquivos/0 offenses; Brakeman 8.0.5 com 0 erros/0 warnings; Bundler Audit com 1.200 advisories/0 vulnerabilidades; Zeitwerk aprovado;
+- assets/runtime: Tailwind 4.3.2 e assets aprovados; servidor temporário retornou HTTP 200 em `/` e `/up` e foi encerrado;
+- CI: `bin/ci` passou integralmente com specs normativas, dependências, banco test, RSpec, lint, segurança, autoload, Tailwind, assets e boot;
+- host: verificador normativo retornou 15 specs/496 requisitos/zero falhas estruturais; `git diff --check` aprovado;
+- problema encontrado: `planning/CURRENT.md` ainda descrevia commit-base e working tree anteriores após o commit de M1; a divergência factual foi corrigida nos registros desta revisão, sem defeito funcional ou reabertura de tarefa.
+
+### Resultado
+
+Milestone M1 promovido de `DONE / READY_FOR_REVIEW` para `VERIFIED`. Nenhuma tarefa precisou ser reaberta e nenhuma correção funcional foi necessária. M2 permanece `NOT_STARTED`.
+
+### Próximo passo
+
+Em nova sessão, executar o protocolo inicial e detalhar `M2-T01 — Company e constraints` antes de qualquer implementação de M2.

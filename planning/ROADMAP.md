@@ -7,7 +7,7 @@ Somente um milestone deve estar `IN_PROGRESS`, salvo justificativa registrada.
 | Milestone | Objetivo | Dependências | Status |
 |---|---|---|---|
 | M0 | Especificação, Dev Container, scaffold Rails e CI inicial | nenhuma | VERIFIED |
-| M1 | Fundação da aplicação, UI base e padrões sobre o Dev Container existente | M0 | DONE |
+| M1 | Fundação da aplicação, UI base e padrões sobre o Dev Container existente | M0 | VERIFIED |
 | M2 | Autenticação, empresas, memberships, convites e tenancy | M1 | NOT_STARTED |
 | M3 | Autorização, painel platform, gestão de usuários e auditoria mínima | M2 | NOT_STARTED |
 | M4 | Caixas e fechamento de caixa | M3 | NOT_STARTED |
@@ -49,7 +49,7 @@ M0 foi promovido a `VERIFIED` em 2026-07-12 após revisão independente das espe
 - `M1-T04`: `DONE` — Pagy 43.6.0, paginação offset acessível, filtros GET seguros, testes e documentação concluídos.
 - `M1-T05`: `DONE / SUPERSEDED_BY_M0-T02A` — nenhuma implementação nova; Dev Container entregue em M0-T02A, integrado em M0-T02B e revalidado na revisão de M0.
 
-M1 está `DONE` e `READY_FOR_REVIEW`, não `VERIFIED`. A próxima sessão deve executar revisão independente do milestone inteiro antes de iniciar M2.
+M1 foi promovido a `VERIFIED` em 2026-07-12 após revisão independente de código, views, integração, rotas, dependências, responsividade, acessibilidade estrutural, contexto de request, paginação/filtros, testes em ordem normal e aleatória, qualidade, segurança, assets, requisições reais e CI canônico. Nenhuma funcionalidade de M2 foi iniciada.
 
 ## Regra de passagem
 
