@@ -1,6 +1,6 @@
 # Finance Manager
 
-Aplicação web multi-tenant para gestão financeira operacional de empresas. O projeto é dirigido pelas especificações versionadas em `specs/`; a persistência estrutural de `Company` existe, mas ainda não há fluxo funcional de gestão financeira ou identidade.
+Aplicação web multi-tenant para gestão financeira operacional de empresas. O projeto é dirigido pelas especificações versionadas em `specs/`; Company e autenticação básica existem, mas ainda não há memberships, tenant ativo ou fluxo financeiro.
 
 ## Stack
 
@@ -132,13 +132,13 @@ Consulte [docs/development-container.md](docs/development-container.md) para arq
 - `planning/CURRENT.md`: estado operacional e próxima ação;
 - `planning/tasks/`: tarefas executáveis e evidências.
 
-Além da persistência estrutural de `Company`, a aplicação ainda não inclui usuários, autenticação, resolução de tenant, caixas, despesas, relatórios ou outros fluxos de domínio.
+Além de Company e autenticação básica, a aplicação ainda não inclui memberships, resolução de tenant, caixas, despesas, relatórios ou outros fluxos de domínio.
 
 ## Fundação visual
 
 A rota `/` apresenta somente o estado institucional atual do projeto. Os layouts e padrões mínimos de interface estão documentados em [docs/ui-foundation.md](docs/ui-foundation.md). Essa base não representa funcionalidades de negócio prontas nem um design system definitivo.
 
-O ciclo de vida de `Current` e dos metadados mínimos de request está documentado em [docs/request-context.md](docs/request-context.md). Essa infraestrutura ainda não implementa autenticação nem resolução de empresa.
+O ciclo de vida de `Current` e dos metadados mínimos de request está documentado em [docs/request-context.md](docs/request-context.md). Autenticação, Sessions, cookie e limites de segurança estão em [docs/authentication.md](docs/authentication.md); resolução de empresa ainda não existe.
 
 As convenções mínimas para controllers, models, services, queries e policies futuras estão em [docs/code-organization.md](docs/code-organization.md). O documento registra também as abstrações deliberadamente adiadas.
 

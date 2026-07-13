@@ -11,6 +11,16 @@
 
     <div class="flex flex-wrap items-center gap-3 text-sm">
       <%= link_to "Início", root_path, class: "rounded-sm font-medium text-slate-700 underline-offset-4 hover:text-slate-950 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-700" %>
+      <% if authenticated? %>
+        <span class="font-medium text-slate-700"><%= Current.user.name %></span>
+        <%= button_to "Sair",
+                      session_path,
+                      method: :delete,
+                      class: button_classes(variant: :neutral),
+                      form_class: "inline-flex" %>
+      <% else %>
+        <%= link_to "Entrar", new_session_path, class: "rounded-sm font-medium text-slate-700 underline-offset-4 hover:text-slate-950 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-700" %>
+      <% end %>
       <% unless Rails.env.production? %>
         <span class="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 font-medium text-amber-900">Ambiente de desenvolvimento</span>
       <% end %>

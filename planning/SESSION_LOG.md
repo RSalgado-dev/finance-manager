@@ -2,6 +2,64 @@
 
 Acrescente novas sessões no topo. Não reescreva entradas antigas, salvo correção factual explícita.
 
+## 2026-07-12 23:47 — M2-T02 User e autenticação
+
+### Objetivo
+
+Detalhar e entregar User/Session globais e autenticação por e-mail/senha, sem iniciar memberships, convites, recuperação, tenant resolution ou autorização.
+
+### Estado inicial
+
+Branch `main`, commit `0776786`, working tree limpa. M0/M1 `VERIFIED`; M2 `IN_PROGRESS`; M2-T01 `DONE`; M2-T02..T08 `NOT_STARTED`. Compose com `app` ativo e `db` healthy; Company/Current revalidados em 34/0 e nenhuma identidade/autenticação existente.
+
+### Trabalho realizado
+
+- M2-T02 detalhada e marcada `IN_PROGRESS` antes de Gemfile/migrations; generator Rails 8.1.3 inspecionado por help, pretend e templates sem ser aplicado;
+- somente bcrypt 3.1.22 adicionada; migrations UUID de users/sessions, constraints nomeadas, índice único `lower(email)` e FK `ON DELETE CASCADE` implementados;
+- User global com normalizações, BCrypt 12..72, reset token desabilitado, enum string e estado ativo; Session global revogável com IP/user agent opcionais;
+- Authentication deny-by-default integrado dentro de RequestContext, preenchendo somente `Current.user`; Home e login explicitamente públicos;
+- login/logout, cookie assinado `session_id`, mitigação de fixation, retorno local seguro, invalidação de sessão de User inativo e atualização explícita de `last_sign_in_at` entregues;
+- view/navegação acessíveis e responsivas, sem cadastro, recovery, empresa ou dashboard;
+- factories e specs de model, PostgreSQL, concern, request e Chromium adicionados;
+- banco test recriado; rollback de duas migrations preservou Company e reaplicação passou;
+- documentação de autenticação, RequestContext, fundação visual, README, tarefa, roadmap e rastreabilidade reconciliados.
+
+### Falhas encontradas e corrigidas
+
+- specs SQL agrupavam duas violações num exemplo e deixavam a transação PostgreSQL abortada; cada constraint passou a ter exemplo próprio;
+- request spec tratava `Set-Cookie` como string, mas Rails 8.1 retorna array; a inspeção passou a normalizar o header;
+- view specs isolados não recebiam `authenticated?`; o contexto de teste passou a declarar explicitamente estado anônimo, sem alteração no código produtivo.
+
+### Verificações
+
+| Verificação | Resultado |
+|---|---|
+| generator | help/pretend/templates inspecionados; nenhum arquivo aplicado |
+| specs model/banco focados | 35 exemplos, 0 falhas |
+| specs integrados focados | 51 exemplos, 0 falhas |
+| RSpec completo | 129 exemplos, 0 falhas |
+| RSpec aleatório | 129 exemplos, 0 falhas; seed `56260` |
+| system specs Chromium | 10 exemplos, 0 falhas |
+| RuboCop | 64 arquivos, 0 offenses |
+| Brakeman 8.0.5 | 0 erros, 0 security warnings |
+| Bundler Audit | 1.200 advisories, 0 vulnerabilidades |
+| Zeitwerk | aprovado |
+| Tailwind/assets | Tailwind 4.3.2 e precompile aprovados |
+| migration limpa/rollback | users/sessions removidas, companies preservada, reaplicação aprovada |
+| runner BCrypt | UUID/digest/autenticação aprovados; reset token ausente; registro removido |
+| rotas/escopo/gems | somente session singular; bcrypt única gem; buscas proibidas sem ocorrências |
+| `bin/ci` | sucesso integral; 129/0 |
+| verificador normativo | 15 specs, 496 requisitos, zero falhas |
+| `git diff --check` | aprovado |
+
+### Estado final
+
+M2 `IN_PROGRESS`; M2-T01 e M2-T02 `DONE`; M2-T03..T08 `NOT_STARTED`. Nenhuma funcionalidade posterior foi antecipada e não houve commit, push, merge, reset ou limpeza destrutiva.
+
+### Handoff
+
+Próxima ação exata: em nova sessão, executar o protocolo inicial e detalhar `M2-T03 — CompanyMembership` antes de implementar; não iniciar convites, tenant resolution ou autorização junto dela.
+
 ## 2026-07-12 22:52 — M2-T01 Company e constraints
 
 ### Objetivo

@@ -81,4 +81,4 @@ A página institucional está em `/` e o healthcheck permanece em `/up`.
 
 ## Limites
 
-Esta fundação não inclui autenticação, empresa ativa, autorização, paginação, dados financeiros, gráficos, uploads, temas ou modo escuro. Novos componentes devem nascer de uso concreto, sem transformar os partials atuais em uma camada genérica paralela ao Rails.
+Autenticação e paginação agora consomem esta fundação e possuem documentação própria. Ainda não existem empresa ativa, autorização, dados financeiros, gráficos, uploads, temas ou modo escuro. Novos componentes devem nascer de uso concreto, sem transformar os partials atuais em uma camada genérica paralela ao Rails.

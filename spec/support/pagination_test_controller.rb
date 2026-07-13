@@ -1,4 +1,6 @@
 class PaginationTestController < ApplicationController
+  allow_unauthenticated_access
+
   RECORDS = (1..60).to_a.freeze
 
   TEMPLATE = <<~ERB

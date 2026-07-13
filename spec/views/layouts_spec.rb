@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Layouts da aplicação", type: :view do
+  before do
+    view.singleton_class.define_method(:authenticated?) { false }
+  end
+
   %w[application public platform tenant print].each do |layout_name|
     it "renderiza #{layout_name} sem autenticação ou tenant" do
       render inline: "<h1>Conteúdo de teste</h1>", layout: "layouts/#{layout_name}"

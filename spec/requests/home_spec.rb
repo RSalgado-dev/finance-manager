@@ -13,6 +13,7 @@ RSpec.describe "Página inicial", type: :request do
     expect(document).to have_title("Início — Finance Manager")
     expect(document).to have_text("Em desenvolvimento")
     expect(document).to have_link("Início", href: root_path)
+    expect(document).to have_link("Entrar", href: new_session_path)
   end
 
   it "não oferece links para funcionalidades futuras" do
@@ -20,7 +21,6 @@ RSpec.describe "Página inicial", type: :request do
 
     document = Capybara.string(response.body)
 
-    expect(document).to have_no_link("Login")
     expect(document).to have_no_link("Cadastro")
     expect(document).to have_no_link("Dashboard")
     expect(document).to have_no_link("Empresas")

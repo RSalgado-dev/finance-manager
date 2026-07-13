@@ -1,0 +1,35 @@
+<% content_for :title, "Entrar" %>
+
+<section class="mx-auto max-w-md py-4 sm:py-8" aria-labelledby="login-title">
+  <header class="mb-6">
+    <h1 id="login-title" class="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Entrar</h1>
+    <p class="mt-2 text-sm leading-6 text-slate-600">Use suas credenciais para acessar a aplicação.</p>
+  </header>
+
+  <div class="ui-card">
+    <%= form_with url: session_path, class: "space-y-5" do |form| %>
+      <div>
+        <%= form.label :email, "E-mail", class: "form-label" %>
+        <%= form.email_field :email,
+                             required: true,
+                             autofocus: true,
+                             autocomplete: "email",
+                             maxlength: User::EMAIL_MAX_LENGTH,
+                             class: "form-input" %>
+      </div>
+
+      <div>
+        <%= form.label :password, "Senha", class: "form-label" %>
+        <%= form.password_field :password,
+                                required: true,
+                                autocomplete: "current-password",
+                                maxlength: User::PASSWORD_MAX_LENGTH,
+                                class: "form-input" %>
+      </div>
+
+      <div class="no-print flex flex-wrap items-center gap-3">
+        <%= form.submit "Entrar", class: button_classes(variant: :primary) %>
+      </div>
+    <% end %>
+  </div>
+</section>

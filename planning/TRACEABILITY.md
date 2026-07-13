@@ -25,6 +25,11 @@ Atualizar conforme a implementação avançar.
 | DATA-COMPANY-002 | M2-T01 e services futuros de suspensão | colunas `active`/`suspended_at`; contrato em `docs/company-model.md` | estrutura testada; operação/coerência transacional deliberadamente futura | SPECIFIED |
 | ARCH-020, ARCH-022, ARCH-024, ARCH-025, ARCH-DATA-002, ARCH-DATA-003, ARCH-DATA-013 | M2-T01 | migration `companies`, `db/schema.rb` | banco test limpo, rollback/reaplicação, runner e constraints diretas | TESTED |
 | TEST-001, TEST-007, TEST-EVID-001 | M2-T01 | `spec/models/company*_spec.rb`, tarefa e histórico | 28 specs focados; suíte 78/0 normal e aleatória (seed 39929) | TESTED |
+| DATA-USER-001, DATA-USER-002, USR-010, USR-011, USR-015 | M2-T02 | `User`, `Session`, migrations users/sessions, `db/schema.rb`, `docs/authentication.md` | model specs e constraints diretas; UUID, defaults, e-mail case-insensitive, roles, FK e cascade | TESTED |
+| AUTH-001, AUTH-002, AUTH-005, AUTH-006, AUTH-008 | M2-T02 | `Authentication`, `SessionsController`, rota singular, login e navegação | request/controller/system specs de login, logout, retomada, inatividade e proteção deny-by-default | TESTED |
+| SEC-001..SEC-003, SEC-008, SEC-012, SEC-013, SEC-016, SEC-017 | M2-T02 | BCrypt, cookie assinado, sessão persistida, retorno local seguro e filtros Rails | digest/runner, fixation, flags do cookie, open redirect, mensagem genérica e buscas negativas | TESTED |
+| PRD-SCOPE-001, PRD-SUCCESS-006, PRD-SUCCESS-007 | M2-T02 e tarefas posteriores | autenticação por e-mail/senha sem cadastro público; identidade global preparada para memberships | fluxo Chromium e request specs aprovados; memberships e autorização permanecem futuras | IMPLEMENTED |
+| TEST-001, TEST-003, TEST-006, TEST-007, TEST-EVID-001 | M2-T02 | specs de model, banco, controller, request e system; tarefa e histórico | suíte 129/0; aleatória seed 56260; Chromium 10/0; CI integral | TESTED |
 | TEST-REQ-001 | M0-T01 | `scripts/check_spec_requirements.sh` | próprio script; revisão independente 15 specs/496 requisitos/zero falhas | VERIFIED |
 | SEC-018 | M8-T05 | — | — | SPECIFIED |
 | OPS-LOCAL-001, OPS-LOCAL-003..OPS-LOCAL-008 | M0-T02A | `.devcontainer/`, `.dockerignore`, `.env.example`, `README.md` | implementação/testes em M0-T02A; revisão independente revalidou build, Compose, runtime não root, hostname `db`, volumes, healthcheck e cleanup; M1-T05 superseded, sem segunda implementação | VERIFIED |
@@ -40,7 +45,7 @@ Atualizar conforme a implementação avançar.
 | NFR-UI-003 | tarefas futuras com ações destrutivas | convenção visual/documental em `button_classes` e `docs/ui-foundation.md` | sem ação destrutiva existente para teste funcional | SPECIFIED |
 | NFR-UI-008 | M1-T01 e telas futuras | importmap/Turbo preservados; layouts server-rendered | request e system specs da página institucional | IMPLEMENTED |
 | NFR-MNT-001, TEST-EVID-001 | M1-T01 | `docs/ui-foundation.md`, README, tarefa e histórico | evidência de 23 specs e verificações finais registrada | TESTED |
-| TEN-008 | M1-T02, M2-T04 | `app/models/current.rb` | revisão independente: atributos, reset, bloco, exceção, threads e cleanup HTTP revalidados; resolução real permanece em M2 | IMPLEMENTED |
+| TEN-008 | M1-T02, M2-T02, M2-T04 | `Current`, `RequestContext`, `Authentication` | seis atributos preservados; Current.user durante autenticação e cleanup após resposta/exceção; company/membership e resolução aguardam M2-T03/T04 | IMPLEMENTED |
 | AUD-007 | M1-T02, M3-T08 | `Current` e `RequestContext` | request specs de request ID, IP e user agent; persistência futura | IMPLEMENTED |
 | TEN-009, NFR-REL-002 | M1-T02 e tarefas futuras de jobs | contrato em `docs/request-context.md`; nenhum job criado | sem execução de job nesta tarefa | SPECIFIED |
 | NFR-REL-005, NFR-REL-006, SEC-017 | M1-T02 e hardening futuro | log tag nativa de request ID; metadados não logados; documentação de privacidade | runner de produção, request specs, Brakeman e inspeção de diff | IMPLEMENTED |

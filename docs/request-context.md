@@ -2,13 +2,16 @@
 
 `Current` concentra somente referências e metadados válidos durante uma execução controlada. A classe herda de `ActiveSupport::CurrentAttributes`, que fornece armazenamento isolado pela unidade de execução do Rails e uma API explícita de atribuição/reset.
 
-Esta infraestrutura não autentica usuários, não resolve empresas e não consulta o banco.
+`RequestContext` não autentica nem consulta o banco. O concern `Authentication`, executado dentro do mesmo ciclo de controller, agora resolve a Session persistida e preenche somente `Current.user`; empresa e membership continuam não resolvidas.
 
 ## Atributos
 
-Referências reservadas para integrações futuras:
+Referência preenchida pela autenticação atual quando há Session válida e User ativo:
 
-- `Current.user`;
+- `Current.user`.
+
+Referências ainda reservadas para integrações futuras:
+
 - `Current.company`;
 - `Current.membership`.
 
@@ -18,7 +21,7 @@ Metadados preenchidos nas requests atuais:
 - `Current.ip_address`;
 - `Current.user_agent`.
 
-Nenhum atributo possui default global. Identidade, empresa e membership permanecem `nil` até as tarefas que implementarem autenticação e tenancy.
+Nenhum atributo possui default global. Empresa e membership permanecem `nil`; user permanece `nil` em request anônima e recebe o User autenticado somente durante request válida.
 
 ## Ciclo de vida HTTP
 
@@ -28,6 +31,8 @@ Nenhum atributo possui default global. Identidade, empresa e membership permanec
 2. copia `request.request_id`, `request.remote_ip` e `request.user_agent` para um bloco `Current.set`;
 3. executa a action e sua renderização dentro desse bloco;
 4. executa `Current.reset` em `ensure`, inclusive quando a action gera exceção.
+
+O before_action de `Authentication` roda dentro desse bloco: retoma a Session pelo cookie assinado, exige User ativo e atribui `Current.user`. Assim request ID, IP e user agent já existem durante a autenticação e todos os seis valores são limpos pelo mesmo `ensure`.
 
 O reset explícito complementa o executor do Rails e torna o contrato verificável. Ele ocorre depois do bloco da action, não durante uma request válida. Callbacks, auditoria ou observabilidade futuros que precisem desses valores devem executar dentro do ciclo da action.
 
@@ -61,11 +66,11 @@ Specs demonstram que:
 
 Testes também executam `Current.reset` no encerramento para impedir contaminação entre exemplos.
 
-## Contrato futuro de autenticação e tenant
+## Autenticação atual e contrato futuro de tenant
 
-As tarefas futuras deverão seguir esta ordem:
+O primeiro passo já está implementado; os demais continuam futuros:
 
-1. autenticação validada preencherá `Current.user`;
+1. autenticação validada preenche `Current.user` sem armazenar Session em Current;
 2. a rota de empresa e a membership autenticada serão usadas para resolver `Current.company` no servidor;
 3. a membership ativa e autorizada preencherá `Current.membership`;
 4. policies e services consumirão esse contexto;
@@ -88,8 +93,8 @@ Nenhum helper ou job foi criado agora porque ainda não existe uso concreto. A i
 
 ## Limites atuais
 
-- não há `User`, `Company`, `CompanyMembership` ou autenticação;
-- não há resolução de slug, hostname, header ou session;
+- há User, Company e autenticação por Session persistida;
+- não há CompanyMembership, resolução de slug/empresa, hostname tenant ou header tenant;
 - não há persistência de auditoria;
 - não há contexto automático para jobs;
 - não há configuração específica de proxies de produção;

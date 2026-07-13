@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_13_013500) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_13_022000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,4 +33,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_013500) do
     t.check_constraint "currency::text = 'BRL'::text", name: "companies_currency_supported"
     t.check_constraint "slug::text ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::text", name: "companies_slug_format"
   end
+
+  create_table "sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.uuid "user_id", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "email", limit: 254, null: false
+    t.datetime "last_sign_in_at"
+    t.string "name", limit: 160, null: false
+    t.string "password_digest", null: false
+    t.string "system_role", default: "user", null: false
+    t.datetime "updated_at", null: false
+    t.index "lower((email)::text)", name: "index_users_on_lower_email", unique: true
+    t.check_constraint "btrim(email::text) <> ''::text", name: "users_email_not_blank"
+    t.check_constraint "btrim(name::text) <> ''::text", name: "users_name_not_blank"
+    t.check_constraint "btrim(password_digest::text) <> ''::text", name: "users_password_digest_not_blank"
+    t.check_constraint "system_role::text = ANY (ARRAY['user'::character varying, 'platform_admin'::character varying]::text[])", name: "users_system_role_supported"
+  end
+
+  add_foreign_key "sessions", "users", on_delete: :cascade
 end

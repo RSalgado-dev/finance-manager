@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   root "home#index"
+  resource :session, only: %i[new create destroy]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -11,6 +12,10 @@ Rails.application.routes.draw do
     get "__test__/request_context" => "request_context_test#show"
     get "__test__/request_context/failure" => "request_context_test#failure"
     get "__test__/pagination" => "pagination_test#index"
+    get "__test__/authentication" => "authentication_test#show"
+    get "__test__/authentication/failure" => "authentication_test#failure"
+    get "__test__/authentication/seed" => "authentication_test#seed_rails_session"
+    get "__test__/authentication/unsafe_return" => "authentication_test#seed_unsafe_return"
   end
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)

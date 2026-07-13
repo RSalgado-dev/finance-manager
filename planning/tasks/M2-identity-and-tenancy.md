@@ -163,7 +163,170 @@ Em nova sessão, executar o protocolo inicial e detalhar `M2-T02 — User e aute
 
 ## M2-T02 — User e autenticação
 
-Status: `NOT_STARTED`
+Status: `DONE`
+
+### Objetivo
+
+Entregar identidade global por `User`, sessões revogáveis persistidas e autenticação web por e-mail/senha, integrada a `Current.user` e protegendo controllers por padrão, sem implementar memberships, recuperação, tenant ou autorização.
+
+### Requisitos relacionados
+
+- `PRD-SCOPE-001`, `PRD-SUCCESS-006`, `PRD-SUCCESS-007`
+- `DATA-USER-001`, `DATA-USER-002`
+- `USR-010`, `USR-011`, `USR-015`
+- `AUTH-001`, `AUTH-002`, `AUTH-005`, `AUTH-006`, `AUTH-008`
+- `SEC-001` a `SEC-003`, `SEC-006`, `SEC-008`, `SEC-012`, `SEC-013`, `SEC-016` a `SEC-018`
+- `TEN-008`
+- `ARCH-020`, `ARCH-DATA-001`, `ARCH-DATA-002`, `ARCH-DATA-013`
+- `TEST-000`, `TEST-001`, `TEST-003`, `TEST-006`, `TEST-007`, `TEST-EVID-001`
+
+### Dependências
+
+- M0 e M1 `VERIFIED`.
+- M2-T01 `DONE`.
+
+### Dentro do escopo
+
+- inspecionar generator oficial Rails 8.1 sem aplicá-lo e adaptar seletivamente seu desenho;
+- bcrypt `~> 3.1`, `User` e `Session` globais com UUID;
+- validações e constraints PostgreSQL para identidade, papel e integridade de sessões;
+- login, logout, cookie assinado `session_id`, mitigação de fixation e retorno local seguro;
+- concern `Authentication` deny-by-default e controllers públicos declarados explicitamente;
+- preenchimento somente de `Current.user`, preservando o ciclo de `RequestContext`;
+- bloqueio genérico de usuário inativo, inclusive sessão persistida existente;
+- atualização explícita de `last_sign_in_at` somente no sucesso;
+- view de login e navegação pública/autenticada acessíveis e responsivas;
+- factories e specs de model, banco, request, view/helper quando necessário e system;
+- migrations reversíveis em banco test limpo, documentação e rastreabilidade.
+
+### Fora do escopo
+
+- cadastro público, CRUD/admin de usuários, bootstrap de platform admin ou seeds com senha;
+- CompanyMembership, CompanyInvitation, convites, primeiro acesso e papéis empresariais;
+- recuperação/alteração de senha, tokens, mailers ou rotas de password;
+- `Current.company`, `Current.membership`, `Current.session`, seleção/resolução de tenant;
+- Pundit, policies, autorização por papel, platform UI e empresa suspensa;
+- MFA, login social, confirmação de e-mail, JWT, remember-me, timeout/refresh/fingerprint;
+- rate limiting, auditoria persistida e tarefas M2-T03+;
+- qualquer gem além de bcrypt.
+
+### Critérios de aceite
+
+- [x] Tarefa detalhada e checkpoint pré-Gemfile/migration registrado.
+- [x] M2-T02 está `IN_PROGRESS` durante a implementação; M2-T03+ permanecem `NOT_STARTED`.
+- [x] Generator Rails foi inspecionado por help, pretend e templates sem aplicar alterações.
+- [x] `Current` preserva exatamente seus seis atributos e `RequestContext` não é substituído.
+- [x] bcrypt é a única dependência nova e reset token está desabilitado.
+- [x] User global usa UUID e não possui `company_id`.
+- [x] nome é obrigatório, normalizado, preserva capitalização e respeita limite coerente.
+- [x] e-mail é obrigatório, normalizado, básico/limitado e único case-insensitive no banco.
+- [x] senha usa digest BCrypt, mínimo 12, máximo BCrypt e confirmação quando fornecida.
+- [x] `system_role` string aceita somente `user`/`platform_admin`, com default e check.
+- [x] `active` é boolean obrigatório/default true; `last_sign_in_at` é opcional.
+- [x] Session global usa UUID, pertence a User e não possui `company_id`.
+- [x] FK impede órfã e `ON DELETE CASCADE` remove sessões com User.
+- [x] Authentication protege controllers por default e oferece opt-out público explícito.
+- [x] Home e SessionsController declaram acesso público aplicável; `/up` permanece funcional.
+- [x] login válido cria nova Session após `reset_session`, emite cookie seguro e atualiza sign-in.
+- [x] login inválido/inativo usa a mesma mensagem e não cria Session/atualiza timestamp.
+- [x] retomada de sessão exige registro existente e User ativo; sessão inativa é invalidada localmente.
+- [x] logout destrói somente a sessão atual, remove cookie e limpa sessão Rails.
+- [x] retorno pós-login aceita somente caminho local seguro e não permite open redirect.
+- [x] Current.user existe durante action autenticada e é limpo após resposta/exceção.
+- [x] Current.company/membership permanecem nulos e não existe Current.session.
+- [x] cookie contém apenas UUID da Session, é assinado, httponly, lax e secure em produção.
+- [x] tela de login e navegação cumprem semântica, teclado, foco, autocomplete e 360 px.
+- [x] não existe cadastro público, recuperação, rota/mailer/token de senha ou rota auxiliar produtiva.
+- [x] factories mínimas e testes de model/banco/request/system passam.
+- [x] migrations aplicam em banco test vazio; rollback STEP=2 preserva Company; reaplicação passa.
+- [x] schema representa UUIDs, defaults, checks, índice funcional, FK/cascade e ausência de company_id.
+- [x] RSpec normal/aleatório, RuboCop, Brakeman, Bundler Audit e Zeitwerk passam.
+- [x] Tailwind/assets e `bin/ci` passam.
+- [x] documentação, rastreabilidade, verificador normativo e `git diff --check` passam.
+
+### Plano técnico
+
+1. Confirmar baseline de Company/Current, rotas, configuração de segurança e ausência de identidade.
+2. Detalhar a tarefa e registrar checkpoint antes de Gemfile/migrations.
+3. Executar `authentication --help/--pretend`, localizar e ler integralmente templates Rails 8.1.
+4. Adicionar somente bcrypt e migrations explícitas de users/sessions.
+5. Implementar models, constraints, factories e specs focados.
+6. Integrar Authentication com RequestContext/Current e testar ordem/cleanup.
+7. Implementar SessionsController, rotas, login, logout, cookie, return path, view e navegação.
+8. Adicionar request/system specs e corrigir apenas defeitos reproduzidos.
+9. Validar banco test limpo, rollback de duas migrations preservando Company e reaplicação.
+10. Documentar e executar verificações completas; marcar DONE somente com todos os critérios verdes.
+
+### Riscos e casos de borda
+
+- generator oficial usar `email_address`, `Current.session`, password reset/Minitest ou IDs incompatíveis; servir apenas como referência;
+- ordem de concerns limpar `Current.user` cedo ou perder metadados; provar dentro/fora da action e em exceção;
+- `has_secure_password` habilitar reset token por default no Rails 8; passar `reset_token: false` e testar API ausente;
+- enum string levantar antes da validação; combinar API explícita com check PostgreSQL e specs;
+- cookie não expor flags no request spec de modo portátil; inspecionar headers/configuração sem confiar em parser inadequado;
+- `reset_session` invalidar o return path; capturar caminho seguro antes e consumir depois;
+- redirect externo entrar por session/params; armazenar somente `request.fullpath` local e validar novamente;
+- Session antiga de User inativo persistir; destruir somente a atual e apagar cookie;
+- delete cascade e `dependent: :destroy` divergirem; testar diretamente no banco;
+- rollback STEP=2 remover Company por ordem/timestamp incorreta; confirmar status e tabela antes/depois;
+- mensagens/logs enumerarem e-mail ou senha; usar mensagem única e filtros existentes.
+
+### Verificação obrigatória
+
+```bash
+docker compose -f .devcontainer/compose.yaml exec app bin/rails generate authentication --help
+docker compose -f .devcontainer/compose.yaml exec app bin/rails generate authentication --pretend
+docker compose -f .devcontainer/compose.yaml exec app bundle install
+docker compose -f .devcontainer/compose.yaml exec app bin/rails db:migrate
+docker compose -f .devcontainer/compose.yaml exec app env RAILS_ENV=test bin/rails db:prepare
+docker compose -f .devcontainer/compose.yaml exec app bundle exec rspec
+docker compose -f .devcontainer/compose.yaml exec app bundle exec rspec --order random
+docker compose -f .devcontainer/compose.yaml exec app bundle exec rubocop
+docker compose -f .devcontainer/compose.yaml exec app bundle exec brakeman --no-pager
+docker compose -f .devcontainer/compose.yaml exec app bundle exec bundler-audit check --update
+docker compose -f .devcontainer/compose.yaml exec app bin/rails zeitwerk:check
+docker compose -f .devcontainer/compose.yaml exec app env RAILS_ENV=test bin/rails tailwindcss:build
+docker compose -f .devcontainer/compose.yaml exec app env RAILS_ENV=test SECRET_KEY_BASE_DUMMY=1 bin/rails assets:precompile
+docker compose -f .devcontainer/compose.yaml exec app bin/ci
+bash scripts/check_spec_requirements.sh
+git diff --check
+git status --short
+```
+
+Também executar runner BCrypt/reset-token, inspeção de rotas/produção, buscas negativas, diff de gems e ciclo do banco test `drop/create/migrate/rollback STEP=2/migrate` preservando Company.
+
+### Evidência parcial
+
+Checkpoint pré-Gemfile/migration em 2026-07-12:
+
+- branch `main`, commit `0776786`, working tree limpa; `app` ativo e `db` healthy;
+- M0/M1 `VERIFIED`, M2 `IN_PROGRESS`, M2-T01 `DONE`, M2-T02..T08 inicialmente `NOT_STARTED`;
+- Company/constraints revalidadas com Current: 34 exemplos, 0 falhas; migration Company `up` em test;
+- ausentes User, Session, CompanyMembership, CompanyInvitation, autenticação e tabelas correspondentes;
+- Current fonte preserva os seis atributos de M1; primeiro runner de introspecção falhou porque Rails 8.1 não oferece `Current.attribute_names`, confirmação refeita pela declaração/leitores;
+- PostgreSQL respondeu `SELECT 1`; configuração atual mantém CSRF, filtros `:passw`/`:email`/`:token`, SSL/secure cookies em produção e Action Mailer sem fluxo de senha;
+- tarefa detalhada antes de alterar Gemfile, migrations ou código.
+- generator help/pretend e templates Rails/Tailwind/RSpec inspecionados; nenhuma alteração gerada foi aplicada;
+- desenho oficial rejeitado onde conflitava: `Current.session`, `email_address`, password reset/mailer/rotas, rate limiting, Action Cable e arquivos de teste genéricos;
+- desenho aproveitado seletivamente: sessão persistida, cookie assinado e concern deny-by-default.
+
+### Evidência de conclusão
+
+- generator Rails 8.1.3 inspecionado por `--help`, `--pretend` e templates; nenhum arquivo gerado foi aplicado e `Current`/`RequestContext` foram preservados;
+- somente bcrypt 3.1.22 foi adicionada; User e Session globais usam UUID, não possuem `company_id` e têm constraints PostgreSQL, índice funcional de e-mail e FK cascade descritos no schema;
+- `has_secure_password reset_token: false`, limites 12..72, enum string validado e autenticação genérica de User inativo foram provados por model/request specs e runner;
+- concern deny-by-default, login/logout, cookie assinado `session_id`, fixation, retorno local, `last_sign_in_at`, revogação e integração restrita a `Current.user` foram cobertos por request/controller specs;
+- tela e navegação foram revalidadas em Chromium quanto a fluxo, teclado, autocomplete, 360 px e overflow;
+- banco test limpo migrou; rollback `STEP=2` removeu apenas users/sessions, preservou companies e a reaplicação deixou as três migrations `up`;
+- falhas intermediárias reproduzidas e corrigidas: transação PostgreSQL abortada por múltiplas violações no mesmo exemplo; `Set-Cookie` array no Rails 8.1; helper isolado ausente em view specs;
+- specs focados de model/banco 35/0; rodada integrada 51/0; RSpec completo 129/0; aleatório 129/0 seed `56260`; system specs Chromium 10/0;
+- RuboCop 64 arquivos/0 offenses; Brakeman 0 warnings; Bundler Audit 1.200 advisories/0 vulnerabilidades; Zeitwerk, Tailwind 4.3.2, assets e `bin/ci` aprovados;
+- rotas produtivas restritas a session singular, `/`, `/up` e engines Rails; buscas negativas confirmaram ausência de M2-T03+, recovery, Devise/JWT e atribuições tenant;
+- verificador normativo: 15 specs, 496 requisitos, zero falhas; `git diff --check` aprovado.
+
+### Próximo passo
+
+Em nova sessão, executar o protocolo inicial e detalhar `M2-T03 — CompanyMembership` antes de qualquer implementação; não iniciar convites, tenant resolution ou autorização junto dela.
 
 ## M2-T03 — CompanyMembership
 

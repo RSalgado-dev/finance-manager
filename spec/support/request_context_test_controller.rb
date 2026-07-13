@@ -1,4 +1,6 @@
 class RequestContextTestController < ApplicationController
+  allow_unauthenticated_access
+
   class_attribute :observed_context
 
   def show

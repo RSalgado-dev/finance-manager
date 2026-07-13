@@ -54,9 +54,10 @@ M1 foi promovido a `VERIFIED` em 2026-07-12 após revisão independente de códi
 ## Progresso de M2
 
 - `M2-T01`: `DONE` — Company com UUID, defaults, normalizações, constraints PostgreSQL, factory, testes de model/banco, migration reversível e documentação concluída.
-- `M2-T02` a `M2-T08`: `NOT_STARTED`.
+- `M2-T02`: `DONE` — User/Session globais com UUID, autenticação revogável, proteção deny-by-default, UI, constraints, rollback, testes e documentação concluídos.
+- `M2-T03` a `M2-T08`: `NOT_STARTED`.
 
-M2 permanece `IN_PROGRESS`. M2-T01 está concluída; não há autenticação, usuários, memberships, convites ou resolução de tenant. M2-T02 é a próxima tarefa e não foi iniciada.
+M2 permanece `IN_PROGRESS`. M2-T01 e M2-T02 estão concluídas; memberships, convites e resolução de tenant continuam não iniciados.
 
 ## Regra de passagem
 
